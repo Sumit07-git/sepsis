@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Sepsis Early Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>Sepsis Prediction System</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/predict" class="nav-link"><i class="fas fa-stethoscope"></i> Predict</a></li>
+                <li><a href="/about" class="nav-link active"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-info-circle"></i> About This System</h1>
+            <p>Understanding sepsis prediction and the AI model</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="about-section">
+            <h2>What is Sepsis?</h2>
+            <p>
+                Sepsis is a life-threatening condition that occurs when the body's response to infection 
+                causes widespread inflammation, leading to tissue damage, organ failure, and potentially death. 
+                It is one of the leading causes of mortality in intensive care units worldwide.
+            </p>
+            <div class="stats-boxes">
+                <div class="stat-box">
+                    <h3>48.9 Million</h3>
+                    <p>Global sepsis cases annually</p>
+                </div>
+                <div class="stat-box">
+                    <h3>11 Million</h3>
+                    <p>Sepsis-related deaths per year</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Early Detection</h3>
+                    <p>Critical for survival</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>How the System Works</h2>
+            <div class="workflow-detail">
+                <div class="workflow-item">
+                    <div class="workflow-number">1</div>
+                    <div class="workflow-content">
+                        <h3>Data Input</h3>
+                        <p>Healthcare providers enter patient vital signs and laboratory values into the system</p>
+                    </div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-number">2</div>
+                    <div class="workflow-content">
+                        <h3>Feature Engineering</h3>
+                        <p>The system automatically calculates clinical scores (SOFA, SIRS, qSOFA) and identifies risk flags</p>
+                    </div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-number">3</div>
+                    <div class="workflow-content">
+                        <h3>AI Analysis</h3>
+                        <p>Random Forest machine learning model analyzes all features to calculate sepsis probability</p>
+                    </div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-number">4</div>
+                    <div class="workflow-content">
+                        <h3>Risk Assessment</h3>
+                        <p>System provides risk level, clinical alerts, and evidence-based recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>Clinical Scoring Systems</h2>
+            <div class="scoring-grid">
+                <div class="scoring-card">
+                    <h3><i class="fas fa-calculator"></i> SOFA Score</h3>
+                    <p><strong>Sequential Organ Failure Assessment</strong></p>
+                    <p>Evaluates dysfunction across multiple organ systems:</p>
+                    <ul>
+                        <li><strong>Respiratory:</strong> Based on oxygen saturation</li>
+                        <li><strong>Cardiovascular:</strong> Mean arterial pressure</li>
+                        <li><strong>Renal:</strong> Creatinine levels</li>
+                        <li><strong>Coagulation:</strong> Platelet count</li>
+                    </ul>
+                    <p class="score-range">Score Range: 0-8+ (Higher = More severe)</p>
+                </div>
+
+                <div class="scoring-card">
+                    <h3><i class="fas fa-thermometer"></i> SIRS Criteria</h3>
+                    <p><strong>Systemic Inflammatory Response Syndrome</strong></p>
+                    <p>Counts presence of these criteria:</p>
+                    <ul>
+                        <li><strong>Temperature:</strong> &lt;36°C or &gt;38°C</li>
+                        <li><strong>Heart Rate:</strong> &gt;90 bpm</li>
+                        <li><strong>Respiratory Rate:</strong> &gt;20/min</li>
+                        <li><strong>WBC:</strong> &lt;4 or &gt;12 ×10³/μL</li>
+                    </ul>
+                    <p class="score-range">Count: 0-4 (≥2 suggests SIRS)</p>
+                </div>
+
+                <div class="scoring-card">
+                    <h3><i class="fas fa-bolt"></i> qSOFA Score</h3>
+                    <p><strong>Quick SOFA</strong></p>
+                    <p>Rapid bedside assessment:</p>
+                    <ul>
+                        <li><strong>Respiratory Rate:</strong> ≥22/min</li>
+                        <li><strong>Altered Mentation:</strong> GCS &lt;15</li>
+                        <li><strong>Systolic BP:</strong> ≤100 mmHg</li>
+                    </ul>
+                    <p class="score-range">Score: 0-3 (≥2 suggests sepsis)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>Machine Learning Model</h2>
+            <div class="model-details">
+                <div class="model-card">
+                    <h3>Algorithm</h3>
+                    <p><strong>Random Forest Classifier</strong></p>
+                    <ul>
+                        <li>Ensemble of 200 decision trees</li>
+                        <li>Trained on 2,000 patient records</li>
+                        <li>Balanced with SMOTE technique</li>
+                        <li>Class-weighted for rare events</li>
+                    </ul>
+                </div>
+
+                <div class="model-card">
+                    <h3>Features</h3>
+                    <p><strong>32 Engineered Features</strong></p>
+                    <ul>
+                        <li>11 base clinical measurements</li>
+                        <li>4 SOFA score components</li>
+                        <li>4 SIRS criteria flags</li>
+                        <li>8 binary risk indicators</li>
+                        <li>5 composite risk scores</li>
+                    </ul>
+                </div>
+
+                <div class="model-card">
+                    <h3>Performance</h3>
+                    <p><strong>Validation Metrics</strong></p>
+                    <ul>
+                        <li>High accuracy on test set</li>
+                        <li>Balanced precision and recall</li>
+                        <li>Strong ROC-AUC score</li>
+                        <li>Validated with cross-validation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>Risk Classification</h2>
+            <div class="risk-levels">
+                <div class="risk-level-card risk-very-high">
+                    <h3><i class="fas fa-skull-crossbones"></i> VERY HIGH RISK</h3>
+                    <p class="probability">Probability: ≥70%</p>
+                    <p>Critical sepsis indicators. Multiple organ dysfunction. Requires immediate intervention and ICU-level care.</p>
+                </div>
+
+                <div class="risk-level-card risk-high">
+                    <h3><i class="fas fa-exclamation-triangle"></i> HIGH RISK</h3>
+                    <p class="probability">Probability: 50-69%</p>
+                    <p>Elevated sepsis risk. Multiple concerning indicators. Urgent clinical review and close monitoring required.</p>
+                </div>
+
+                <div class="risk-level-card risk-moderate">
+                    <h3><i class="fas fa-exclamation-circle"></i> MODERATE RISK</h3>
+                    <p class="probability">Probability: 30-49%</p>
+                    <p>Some concerning indicators present. Enhanced monitoring and frequent reassessment recommended.</p>
+                </div>
+
+                <div class="risk-level-card risk-low">
+                    <h3><i class="fas fa-check-circle"></i> LOW RISK</h3>
+                    <p class="probability">Probability: &lt;30%</p>
+                    <p>Minimal sepsis indicators. Continue routine monitoring and standard care protocols.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>Dataset Information</h2>
+            <div class="dataset-info">
+                <h3><i class="fas fa-database"></i> PhysioNet Sepsis Challenge Dataset</h3>
+                <p>
+                    The model is trained on data inspired by the PhysioNet/Computing in Cardiology Challenge 2019 
+                    dataset, which contains ICU patient records with hourly vital signs and laboratory values.
+                </p>
+                <div class="dataset-features-grid">
+                    <div class="dataset-feature">
+                        <h4>Data Source</h4>
+                        <p>ICU patient monitoring systems</p>
+                    </div>
+                    <div class="dataset-feature">
+                        <h4>Patient Records</h4>
+                        <p>2,000 patients (training set)</p>
+                    </div>
+                    <div class="dataset-feature">
+                        <h4>Sepsis Prevalence</h4>
+                        <p>~35% positive cases</p>
+                    </div>
+                    <div class="dataset-feature">
+                        <h4>Variables</h4>
+                        <p>11 clinical measurements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>Technical Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3><i class="fab fa-python"></i> Backend</h3>
+                    <ul>
+                        <li>Python 3.8+</li>
+                        <li>Flask Web Framework</li>
+                        <li>scikit-learn</li>
+                        <li>imbalanced-learn</li>
+                        <li>NumPy & Pandas</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h3><i class="fas fa-code"></i> Frontend</h3>
+                    <ul>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>JavaScript (Vanilla)</li>
+                        <li>Font Awesome Icons</li>
+                        <li>Responsive Design</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h3><i class="fas fa-brain"></i> ML Pipeline</h3>
+                    <ul>
+                        <li>Random Forest</li>
+                        <li>SMOTE Balancing</li>
+                        <li>StandardScaler</li>
+                        <li>Feature Engineering</li>
+                        <li>Cross-validation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section disclaimer-section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Important Disclaimer</h2>
+            <div class="disclaimer-box">
+                <p><strong>This system is for educational and research purposes only.</strong></p>
+                <p>
+                    This sepsis prediction system is designed as a demonstration of machine learning 
+                    applications in healthcare and should NOT be used for actual clinical decision-making 
+                    without proper validation, regulatory approval, and oversight by qualified healthcare professionals.
+                </p>
+                <ul>
+                    <li>Not FDA approved or clinically validated</li>
+                    <li>Should not replace clinical judgment</li>
+                    <li>Predictions are probabilistic, not definitive</li>
+                    <li>Always consult qualified healthcare providers</li>
+                    <li>Follow institutional sepsis protocols</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>References</h2>
+            <div class="references">
+                <ul>
+                    <li>
+                        <strong>Sepsis-3 Definitions:</strong> Singer, M., et al. (2016). "The Third International Consensus 
+                        Definitions for Sepsis and Septic Shock (Sepsis-3)." <em>JAMA</em>, 315(8), 801-810.
+                    </li>
+                    <li>
+                        <strong>SOFA Score:</strong> Vincent, J.L., et al. (1996). "The SOFA (Sepsis-related Organ Failure 
+                        Assessment) score to describe organ dysfunction/failure." <em>Intensive Care Medicine</em>, 22(7), 707-710.
+                    </li>
+                    <li>
+                        <strong>PhysioNet Challenge:</strong> Reyna, M.A., et al. (2019). "Early Prediction of Sepsis from 
+                        Clinical Data: the PhysioNet/Computing in Cardiology Challenge 2019." <em>Critical Care Medicine</em>.
+                    </li>
+                    <li>
+                        <strong>SMOTE Technique:</strong> Chawla, N.V., et al. (2002). "SMOTE: Synthetic Minority Over-sampling 
+                        Technique." <em>Journal of Artificial Intelligence Research</em>, 16, 321-357.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
+            <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>
+        </div>
+    </footer>
+</body>
+</html>

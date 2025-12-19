@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Results - Sepsis Early Prediction{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-chart-line"></i> Training Results & Analysis</h1>
+        <p>Comprehensive model evaluation and visualizations</p>
+    </div>
+</div>
+
+<div class="container">
+    {% if no_results %}
+    <div class="no-results">
+        <i class="fas fa-info-circle"></i>
+        <h2>No Results Available</h2>
+        <p>Please train the models first to see results and visualizations.</p>
+        <a href="/train" class="btn btn-primary">
+            <i class="fas fa-brain"></i> Go to Training
+        </a>
+    </div>
+    {% else %}
+    
+    <div class="results-section">
+        <h2><i class="fas fa-trophy"></i> Model Performance Comparison</h2>
+        <div class="table-container">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                        <th>ROC-AUC</th>
+                        <th>Specificity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td class="model-name">{{ result.Model }}</td>
+                        <td>{{ "%.4f"|format(result.Accuracy) }}</td>
+                        <td>{{ "%.4f"|format(result.Precision) }}</td>
+                        <td>{{ "%.4f"|format(result.Recall) }}</td>
+                        <td><strong>{{ "%.4f"|format(result['F1-Score']) }}</strong></td>
+                        <td>{{ "%.4f"|format(result['ROC-AUC']) }}</td>
+                        <td>{{ "%.4f"|format(result.Specificity) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if plots.model_comparison %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-chart-bar"></i> Model Comparison Visualization</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/model_comparison.png') }}" alt="Model Comparison">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plots.class_distribution %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-balance-scale"></i> Dataset Distribution Analysis</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/class_distribution.png') }}" alt="Class Distribution">
+        </div>
+        <p class="plot-description">
+            Distribution of sepsis vs non-sepsis cases in the training dataset. 
+            Class imbalance is handled using SMOTE or other balancing techniques.
+        </p>
+    </div>
+    {% endif %}
+
+    {% if plots.correlation_heatmap %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-project-diagram"></i> Feature Correlation Heatmap</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/correlation_heatmap.png') }}" alt="Correlation Heatmap">
+        </div>
+        <p class="plot-description">
+            Correlation matrix showing relationships between top clinical features. 
+            Strong correlations (red/blue) indicate feature dependencies.
+        </p>
+    </div>
+    {% endif %}
+
+    {% if plots.vitals_trends %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-activity"></i> Vital Signs Trends Before Sepsis</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/vitals_trends.png') }}" alt="Vitals Trends">
+        </div>
+        <p class="plot-description">
+            Time-series analysis showing how vital signs change in the 12 hours leading to sepsis onset. 
+            The red dashed line marks sepsis onset (t=0).
+        </p>
+    </div>
+    {% endif %}
+
+    {% if plots.outlier_detection %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-exclamation-circle"></i> Outlier Detection Analysis</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/outlier_detection.png') }}" alt="Outlier Detection">
+        </div>
+        <p class="plot-description">
+            Box plots showing feature distributions and outlier detection for key vital signs. 
+            Outliers often indicate critical clinical states.
+        </p>
+    </div>
+    {% endif %}
+
+    {% if plots.pca_analysis %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-compress"></i> PCA Dimensionality Analysis</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/pca_analysis.png') }}" alt="PCA Analysis">
+        </div>
+        <p class="plot-description">
+            Principal Component Analysis showing separation between sepsis and non-sepsis cases 
+            in reduced dimensional space and explained variance by components.
+        </p>
+    </div>
+    {% endif %}
+
+    {% if plots.feature_importance %}
+    <div class="visualization-section">
+        <h2><i class="fas fa-star"></i> Feature Importance Analysis</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='plots/feature_importance.png') }}" alt="Feature Importance">
+        </div>
+        <p class="plot-description">
+            Top 20 most important features contributing to sepsis prediction. 
+            Higher importance indicates stronger predictive power.
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="key-findings">
+        <h2><i class="fas fa-lightbulb"></i> Key Findings</h2>
+        <div class="findings-grid">
+            <div class="finding-card">
+                <h3>Smart Features</h3>
+                <ul>
+                    <li>Rolling averages capture temporal patterns</li>
+                    <li>Rate of change detects deterioration</li>
+                    <li>SOFA scores integrate multiple organ systems</li>
+                    <li>Binary flags provide interpretable thresholds</li>
+                </ul>
+            </div>
+            
+            <div class="finding-card">
+                <h3>Model Performance</h3>
+                <ul>
+                    <li>Ensemble methods (RF, XGBoost) perform best</li>
+                    <li>SMOTE effectively handles class imbalance</li>
+                    <li>High recall critical for sepsis detection</li>
+                    <li>Cross-validation ensures robustness</li>
+                </ul>
+            </div>
+            
+            <div class="finding-card">
+                <h3>Clinical Insights</h3>
+                <ul>
+                    <li>Lactate and vital sign trends are top predictors</li>
+                    <li>6-hour prediction window allows intervention</li>
+                    <li>Multi-organ failure patterns emerge early</li>
+                    <li>Personalized risk assessment possible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}

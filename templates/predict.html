@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict - Sepsis Early Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>Sepsis Prediction System</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/predict" class="nav-link active"><i class="fas fa-stethoscope"></i> Predict</a></li>
+                <li><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-stethoscope"></i> Sepsis Risk Assessment</h1>
+            <p>Enter patient vital signs and laboratory values for AI-powered sepsis prediction</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="prediction-layout">
+            <!-- Input Form -->
+            <div class="prediction-form-container">
+                <h2>Patient Data Input</h2>
+                <form id="predictionForm" class="prediction-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-heartbeat"></i> Vital Signs</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="HR">Heart Rate (bpm)</label>
+                                <input type="number" id="HR" name="HR" class="form-control" 
+                                       value="80" min="40" max="180" step="1" required>
+                                <small>Normal: 60-100 bpm</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="Temp">Temperature (°C)</label>
+                                <input type="number" id="Temp" name="Temp" class="form-control" 
+                                       value="37" min="34" max="42" step="0.1" required>
+                                <small>Normal: 36.5-37.5°C</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="Resp">Respiratory Rate (breaths/min)</label>
+                                <input type="number" id="Resp" name="Resp" class="form-control" 
+                                       value="16" min="8" max="40" step="1" required>
+                                <small>Normal: 12-20/min</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="O2Sat">Oxygen Saturation (%)</label>
+                                <input type="number" id="O2Sat" name="O2Sat" class="form-control" 
+                                       value="95" min="70" max="100" step="1" required>
+                                <small>Normal: >95%</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="SBP">Systolic BP (mmHg)</label>
+                                <input type="number" id="SBP" name="SBP" class="form-control" 
+                                       value="120" min="60" max="200" step="1" required>
+                                <small>Normal: 90-120 mmHg</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="DBP">Diastolic BP (mmHg)</label>
+                                <input type="number" id="DBP" name="DBP" class="form-control" 
+                                       value="70" min="30" max="120" step="1" required>
+                                <small>Normal: 60-80 mmHg</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="MAP">Mean Arterial Pressure (mmHg)</label>
+                                <input type="number" id="MAP" name="MAP" class="form-control" 
+                                       value="80" min="40" max="140" step="1" required>
+                                <small>Normal: 70-100 mmHg (Auto-calculated)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-flask"></i> Laboratory Values</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="WBC">White Blood Cell Count (×10³/μL)</label>
+                                <input type="number" id="WBC" name="WBC" class="form-control" 
+                                       value="8" min="1" max="30" step="0.1" required>
+                                <small>Normal: 4-11 ×10³/μL</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="Platelets">Platelets (×10³/μL)</label>
+                                <input type="number" id="Platelets" name="Platelets" class="form-control" 
+                                       value="200" min="20" max="500" step="1" required>
+                                <small>Normal: 150-400 ×10³/μL</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="Creatinine">Creatinine (mg/dL)</label>
+                                <input type="number" id="Creatinine" name="Creatinine" class="form-control" 
+                                       value="1.0" min="0.3" max="8" step="0.1" required>
+                                <small>Normal: 0.6-1.2 mg/dL</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="Lactate">Lactate (mmol/L)</label>
+                                <input type="number" id="Lactate" name="Lactate" class="form-control" 
+                                       value="1.5" min="0.5" max="10" step="0.1" required>
+                                <small>Normal: 0.5-2.2 mmol/L</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-calculator"></i> Calculate Risk
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="loadSepsisExample()">
+                            <i class="fas fa-exclamation-triangle"></i> Sepsis Example
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="loadNormalExample()">
+                            <i class="fas fa-check"></i> Normal Example
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Display -->
+            <div class="prediction-result" id="predictionResult" style="display: none;">
+                <h2>Risk Assessment Result</h2>
+                
+                <div class="risk-display" id="riskDisplay">
+                    <div class="risk-icon" id="riskIcon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 id="riskLevel" class="risk-level">-</h3>
+                    <p id="riskProbability" class="risk-probability">-</p>
+                </div>
+                
+                <div class="clinical-scores">
+                    <div class="score-item">
+                        <h4>SOFA Score</h4>
+                        <p id="sofaScore" class="score-value">-</p>
+                    </div>
+                    <div class="score-item">
+                        <h4>SIRS Count</h4>
+                        <p id="sirsCount" class="score-value">-</p>
+                    </div>
+                </div>
+
+                <div class="clinical-alerts" id="clinicalAlerts" style="display: none;">
+                    <h4><i class="fas fa-bell"></i> Clinical Alerts</h4>
+                    <ul id="alertsList"></ul>
+                </div>
+                
+                <div class="risk-details">
+                    <h4><i class="fas fa-info-circle"></i> Clinical Interpretation</h4>
+                    <p id="riskInterpretation">-</p>
+                    
+                    <h4><i class="fas fa-clipboard-list"></i> Recommendations</h4>
+                    <ul id="recommendations"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
+            <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-calculate MAP from SBP and DBP
+        document.getElementById('SBP').addEventListener('input', calculateMAP);
+        document.getElementById('DBP').addEventListener('input', calculateMAP);
+
+        function calculateMAP() {
+            const sbp = parseFloat(document.getElementById('SBP').value);
+            const dbp = parseFloat(document.getElementById('DBP').value);
+            
+            if (!isNaN(sbp) && !isNaN(dbp)) {
+                const map = Math.round((sbp + 2 * dbp) / 3);
+                document.getElementById('MAP').value = map;
+            }
+        }
+
+        function loadSepsisExample() {
+            document.getElementById('HR').value = 118;
+            document.getElementById('Temp').value = 38.8;
+            document.getElementById('Resp').value = 26;
+            document.getElementById('O2Sat').value = 89;
+            document.getElementById('SBP').value = 85;
+            document.getElementById('DBP').value = 52;
+            document.getElementById('MAP').value = 63;
+            document.getElementById('WBC').value = 16.5;
+            document.getElementById('Platelets').value = 95;
+            document.getElementById('Creatinine').value = 2.3;
+            document.getElementById('Lactate').value = 4.2;
+        }
+
+        function loadNormalExample() {
+            document.getElementById('HR').value = 75;
+            document.getElementById('Temp').value = 36.8;
+            document.getElementById('Resp').value = 14;
+            document.getElementById('O2Sat').value = 98;
+            document.getElementById('SBP').value = 125;
+            document.getElementById('DBP').value = 75;
+            document.getElementById('MAP').value = 92;
+            document.getElementById('WBC').value = 7.2;
+            document.getElementById('Platelets').value = 240;
+            document.getElementById('Creatinine').value = 0.9;
+            document.getElementById('Lactate').value = 1.1;
+        }
+
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('predictionResult');
+            const riskDisplay = document.getElementById('riskDisplay');
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    resultDiv.style.display = 'block';
+                    
+                    const probability = (data.probability * 100).toFixed(1);
+                    
+                    // Update risk display
+                    riskDisplay.className = 'risk-display risk-' + data.risk_class;
+                    
+                    const icons = {
+                        'very-high': 'fa-skull-crossbones',
+                        'high': 'fa-exclamation-triangle',
+                        'moderate': 'fa-exclamation-circle',
+                        'low': 'fa-check-circle'
+                    };
+                    
+                    document.getElementById('riskIcon').innerHTML = 
+                        `<i class="fas ${icons[data.risk_class]}"></i>`;
+                    document.getElementById('riskLevel').textContent = data.risk_level + ' RISK';
+                    document.getElementById('riskProbability').textContent = 
+                        `Sepsis Probability: ${probability}%`;
+                    
+                    // Update clinical scores
+                    document.getElementById('sofaScore').textContent = data.sofa_score;
+                    document.getElementById('sirsCount').textContent = data.sirs_count;
+                    
+                    // Update alerts
+                    const alertsDiv = document.getElementById('clinicalAlerts');
+                    const alertsList = document.getElementById('alertsList');
+                    
+                    if (data.alerts && data.alerts.length > 0) {
+                        alertsDiv.style.display = 'block';
+                        alertsList.innerHTML = '';
+                        data.alerts.forEach(alert => {
+                            const li = document.createElement('li');
+                            li.className = 'alert-item';
+                            li.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${alert}`;
+                            alertsList.appendChild(li);
+                        });
+                    } else {
+                        alertsDiv.style.display = 'none';
+                    }
+                    
+                    // Interpretation
+                    const interpretations = {
+                        'VERY HIGH': 'Patient shows CRITICAL risk for sepsis. Multiple organ dysfunction indicators present. Immediate intervention required.',
+                        'HIGH': 'Patient shows elevated risk for sepsis development. Multiple clinical indicators suggest early sepsis or SIRS criteria are being met. Prompt clinical review recommended.',
+                        'MODERATE': 'Patient shows moderate risk for sepsis. Some concerning clinical indicators present. Close monitoring and reassessment recommended.',
+                        'LOW': 'Patient shows low risk for sepsis development. Vital signs and laboratory values are within acceptable ranges.'
+                    };
+                    
+                    document.getElementById('riskInterpretation').textContent = 
+                        interpretations[data.risk_level];
+                    
+                    // Recommendations
+                    const recommendations = document.getElementById('recommendations');
+                    recommendations.innerHTML = '';
+                    
+                    let recs = [];
+                    if (data.risk_level === 'VERY HIGH') {
+                        recs = [
+                            'IMMEDIATE physician notification required',
+                            'Initiate sepsis protocol immediately',
+                            'Obtain blood cultures before antibiotics',
+                            'Begin broad-spectrum antibiotics within 1 hour',
+                            'Aggressive fluid resuscitation (30 mL/kg crystalloid)',
+                            'Consider ICU transfer if not already in ICU',
+                            'Monitor vital signs every 15-30 minutes',
+                            'Reassess lactate within 2-4 hours'
+                        ];
+                    } else if (data.risk_level === 'HIGH') {
+                        recs = [
+                            'Urgent clinical review recommended',
+                            'Consider obtaining blood cultures',
+                            'Monitor vital signs every 30-60 minutes',
+                            'Assess for source of infection',
+                            'Consider early antibiotics if infection suspected',
+                            'Optimize fluid resuscitation',
+                            'Consult critical care team',
+                            'Reassess in 1-2 hours or with clinical change'
+                        ];
+                    } else if (data.risk_level === 'MODERATE') {
+                        recs = [
+                            'Clinical review within 2-4 hours',
+                            'Monitor vital signs every 2 hours',
+                            'Trend laboratory values',
+                            'Assess for signs of infection',
+                            'Consider repeat lactate if elevated',
+                            'Document baseline for trending',
+                            'Reassess if clinical status changes'
+                        ];
+                    } else {
+                        recs = [
+                            'Continue routine monitoring',
+                            'Maintain standard vital sign frequency',
+                            'Reassess if clinical status changes',
+                            'Document baseline values for trending'
+                        ];
+                    }
+                    
+                    recs.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = rec;
+                        recommendations.appendChild(li);
+                    });
+                    
+                    // Scroll to result
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    alert('Prediction failed: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

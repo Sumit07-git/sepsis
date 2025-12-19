@@ -1,0 +1,132 @@
+"""
+Train and save pre-trained sepsis prediction model
+Run this once to generate the model file
+"""
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import SMOTE
+import joblib
+import os
+from data_preprocessing import SepsisDataPreprocessor, generate_pretrained_model_data
+
+def train_pretrained_model():
+    """Train the model that will be used for predictions"""
+    
+    print("="*60)
+    print("TRAINING SEPSIS PREDICTION MODEL")
+    print("="*60)
+    
+    # Generate or load training data
+    if not os.path.exists('sepsis_training_data.csv'):
+        print("\n[1/7] Generating training dataset...")
+        df = generate_pretrained_model_data()
+    else:
+        print("\n[1/7] Loading training dataset...")
+        df = pd.read_csv('sepsis_training_data.csv')
+    
+    print(f"Dataset: {df.shape[0]} patients, {df.shape[1]} features")
+    print(f"Sepsis prevalence: {df['SepsisLabel'].mean()*100:.1f}%")
+    
+    # Initialize preprocessor
+    print("\n[2/7] Creating features...")
+    preprocessor = SepsisDataPreprocessor()
+    
+    # Prepare features for all patients
+    X_list = []
+    y_list = []
+    
+    for idx, row in df.iterrows():
+        patient_data = row.to_dict()
+        X, features = preprocessor.prepare_for_prediction(patient_data)
+        X_list.append(X[0])
+        y_list.append(patient_data['SepsisLabel'])
+    
+    X = np.array(X_list)
+    y = np.array(y_list)
+    
+    print(f"Feature matrix shape: {X.shape}")
+    print(f"Total features: {len(features)}")
+    
+    # Split data
+    print("\n[3/7] Splitting data (80/20)...")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+    
+    print(f"Training set: {X_train.shape[0]} samples")
+    print(f"Test set: {X_test.shape[0]} samples")
+    
+    # Scale features
+    print("\n[4/7] Scaling features...")
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    # Handle class imbalance with SMOTE
+    print("\n[5/7] Handling class imbalance with SMOTE...")
+    print(f"Before SMOTE - Class 0: {sum(y_train == 0)}, Class 1: {sum(y_train == 1)}")
+    
+    smote = SMOTE(random_state=42, k_neighbors=5)
+    X_train_balanced, y_train_balanced = smote.fit_resample(X_train_scaled, y_train)
+    
+    print(f"After SMOTE - Class 0: {sum(y_train_balanced == 0)}, Class 1: {sum(y_train_balanced == 1)}")
+    
+    # Train Random Forest model
+    print("\n[6/7] Training Random Forest model...")
+    model = RandomForestClassifier(
+        n_estimators=200,
+        max_depth=20,
+        min_samples_split=5,
+        min_samples_leaf=2,
+        class_weight='balanced',
+        random_state=42,
+        n_jobs=-1
+    )
+    
+    model.fit(X_train_balanced, y_train_balanced)
+    print("Model trained successfully!")
+    
+    # Evaluate
+    print("\n[7/7] Evaluating model performance...")
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+    
+    y_pred = model.predict(X_test_scaled)
+    y_pred_proba = model.predict_proba(X_test_scaled)[:, 1]
+    
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    roc_auc = roc_auc_score(y_test, y_pred_proba)
+    
+    print(f"\nTest Set Performance:")
+    print(f"  Accuracy:  {accuracy:.4f}")
+    print(f"  Precision: {precision:.4f}")
+    print(f"  Recall:    {recall:.4f}")
+    print(f"  F1-Score:  {f1:.4f}")
+    print(f"  ROC-AUC:   {roc_auc:.4f}")
+    
+    # Save model and scaler
+    print("\n[SAVING] Saving model and scaler...")
+    os.makedirs('models', exist_ok=True)
+    
+    joblib.dump(model, 'models/sepsis_model.pkl')
+    joblib.dump(scaler, 'models/scaler.pkl')
+    joblib.dump(features, 'models/features.pkl')
+    
+    print("✓ Model saved to: models/sepsis_model.pkl")
+    print("✓ Scaler saved to: models/scaler.pkl")
+    print("✓ Features saved to: models/features.pkl")
+    
+    print("\n" + "="*60)
+    print("MODEL TRAINING COMPLETED SUCCESSFULLY!")
+    print("="*60)
+    
+    return model, scaler, features
+
+if __name__ == "__main__":
+    train_pretrained_model()

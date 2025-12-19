@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Train Models - Sepsis Early Prediction{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-brain"></i> Train Machine Learning Models</h1>
+        <p>Configure and train multiple ML algorithms on the sepsis dataset</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="training-section">
+        <div class="training-form-container">
+            <h2>Training Configuration</h2>
+            <form id="trainingForm" class="training-form">
+                <div class="form-group">
+                    <label for="imbalance_method">
+                        <i class="fas fa-balance-scale"></i> Class Imbalance Handling Method
+                    </label>
+                    <select id="imbalance_method" name="imbalance_method" class="form-control">
+                        <option value="smote">SMOTE (Synthetic Minority Over-sampling)</option>
+                        <option value="smotetomek">SMOTE + Tomek Links</option>
+                        <option value="undersample">Random Under-sampling</option>
+                        <option value="class_weight">Class Weights Only</option>
+                    </select>
+                    <small>SMOTE creates synthetic samples to balance classes</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="prediction_window">
+                        <i class="fas fa-clock"></i> Early Prediction Window (hours)
+                    </label>
+                    <input type="number" id="prediction_window" name="prediction_window" 
+                           class="form-control" value="6" min="1" max="12">
+                    <small>Predict sepsis this many hours in advance</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-play"></i> Start Training
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="training-info">
+            <h3><i class="fas fa-info-circle"></i> Training Process</h3>
+            <div class="info-box">
+                <h4>What Happens During Training:</h4>
+                <ol>
+                    <li><strong>Data Loading:</strong> Load PhysioNet sepsis dataset</li>
+                    <li><strong>Feature Engineering:</strong> Create 60+ smart features including:
+                        <ul>
+                            <li>Rolling averages (3h, 6h windows)</li>
+                            <li>Rate of change for vitals</li>
+                            <li>SOFA-inspired clinical scores</li>
+                            <li>Binary risk flags</li>
+                        </ul>
+                    </li>
+                    <li><strong>Preprocessing:</strong> Handle missing values, scale features</li>
+                    <li><strong>Class Balancing:</strong> Apply SMOTE or selected method</li>
+                    <li><strong>Model Training:</strong> Train 9 algorithms:
+                        <ul>
+                            <li>Random Forest</li>
+                            <li>XGBoost</li>
+                            <li>Gradient Boosting</li>
+                            <li>SVM</li>
+                            <li>Logistic Regression</li>
+                            <li>KNN</li>
+                            <li>Decision Tree</li>
+                            <li>Naive Bayes</li>
+                            <li>AdaBoost</li>
+                        </ul>
+                    </li>
+                    <li><strong>Evaluation:</strong> Compare models using accuracy, precision, recall, F1-score, ROC-AUC</li>
+                    <li><strong>Visualization:</strong> Generate comprehensive plots and analysis</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <h4>Performance Metrics:</h4>
+                <ul>
+                    <li><strong>Accuracy:</strong> Overall correctness</li>
+                    <li><strong>Precision:</strong> True positives / (True positives + False positives)</li>
+                    <li><strong>Recall (Sensitivity):</strong> Ability to detect sepsis cases</li>
+                    <li><strong>F1-Score:</strong> Harmonic mean of precision and recall</li>
+                    <li><strong>ROC-AUC:</strong> Area under the receiver operating characteristic curve</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="trainingProgress" class="training-progress" style="display: none;">
+        <div class="progress-container">
+            <h3><i class="fas fa-spinner fa-spin"></i> Training in Progress...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p id="progressText">Initializing...</p>
+        </div>
+    </div>
+
+    <div id="trainingResults" class="training-results" style="display: none;">
+        <h2><i class="fas fa-check-circle"></i> Training Complete!</h2>
+        <div class="results-summary">
+            <div class="result-card">
+                <h3>Best Model</h3>
+                <p id="bestModel" class="result-value">-</p>
+            </div>
+            <div class="result-card">
+                <h3>F1-Score</h3>
+                <p id="bestScore" class="result-value">-</p>
+            </div>
+        </div>
+        <div class="results-actions">
+            <a href="/results" class="btn btn-primary">
+                <i class="fas fa-chart-line"></i> View Detailed Results
+            </a>
+            <a href="/predict" class="btn btn-secondary">
+                <i class="fas fa-stethoscope"></i> Make Predictions
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('trainingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const progressDiv = document.getElementById('trainingProgress');
+    const resultsDiv = document.getElementById('trainingResults');
+    const progressText = document.getElementById('progressText');
+    
+    progressDiv.style.display = 'block';
+    resultsDiv.style.display = 'none';
+    
+    const formData = new FormData(this);
+    
+    try {
+        progressText.textContent = 'Loading dataset...';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        progressText.textContent = 'Creating features...';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        progressText.textContent = 'Training models... This may take a few minutes...';
+        
+        const response = await fetch('/train', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            progressDiv.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            
+            document.getElementById('bestModel').textContent = data.best_model;
+            document.getElementById('bestScore').textContent = data.best_score.toFixed(4);
+        } else {
+            alert('Training failed: ' + data.message);
+            progressDiv.style.display = 'none';
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+        progressDiv.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}
