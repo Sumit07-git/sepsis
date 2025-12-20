@@ -39,6 +39,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    
 }
 
 .navbar .container {
@@ -48,13 +49,22 @@ body {
     padding: 1rem 20px;
 }
 
+.app-logo {
+    height: 64px;
+    width: auto;
+    /* margin-right: 10px; */
+    min-height: 64px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+
 .nav-brand {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary-color);
 }
 
 .nav-brand i {
@@ -181,12 +191,11 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: var(--shadow);
-    transition: transform 0.3s;
 }
 
 .feature-card:hover, .parameter-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+    
 }
 
 .feature-icon {
@@ -799,3 +808,586 @@ body {
         max-height: none;
     }
 }
+
+/* Mobile-Responsive Enhancements for Sepsis Prediction System */
+
+/* Improved Mobile Navigation */
+@media (max-width: 768px) {
+    .navbar .container {
+        flex-direction: column;
+        padding: 0.75rem 15px;
+    }
+    
+    .nav-brand {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .nav-brand i {
+        font-size: 1.3rem;
+    }
+    
+    .nav-menu {
+        flex-direction: row;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem;
+    }
+    
+    .nav-link i {
+        font-size: 1rem;
+    }
+}
+
+/* Mobile Hero Section */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        padding: 0 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        padding: 0 1rem;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* Mobile Page Header */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 2rem 0;
+    }
+    
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .page-header p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Forms */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .prediction-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .prediction-form-container,
+    .prediction-result {
+        padding: 1rem;
+    }
+    
+    .prediction-result {
+        position: static;
+        max-height: none;
+        margin-bottom: 1rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        padding: 0.65rem;
+        font-size: 1rem;
+    }
+    
+    .form-group small {
+        font-size: 0.8rem;
+    }
+}
+
+/* Mobile Demographics Section */
+@media (max-width: 768px) {
+    .demographics-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .gender-select {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .gender-option {
+        flex: 1;
+    }
+}
+
+/* Mobile Buttons */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+    }
+    
+    .btn-large {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+    }
+}
+
+/* Mobile Features Grid */
+@media (max-width: 768px) {
+    .features-section,
+    .workflow-section,
+    .stats-section {
+        padding: 2rem 0;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .features-grid,
+    .parameters-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .feature-card,
+    .parameter-card {
+        padding: 1.5rem;
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+    }
+}
+
+/* Mobile Workflow */
+@media (max-width: 768px) {
+    .workflow-steps {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .workflow-step {
+        min-width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .workflow-arrow {
+        transform: rotate(90deg);
+        font-size: 1.5rem;
+        margin: 0.5rem 0;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+}
+
+/* Mobile Results Page */
+@media (max-width: 968px) {
+    .results-container {
+        padding: 0 15px;
+    }
+    
+    .results-header {
+        padding: 1.5rem;
+    }
+    
+    .risk-display {
+        padding: 1.5rem;
+    }
+    
+    .risk-icon {
+        font-size: 3rem;
+    }
+    
+    .risk-level {
+        font-size: 1.5rem;
+    }
+    
+    .risk-probability {
+        font-size: 1rem;
+    }
+    
+    .clinical-scores {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .results-card {
+        padding: 1.25rem;
+    }
+    
+    .results-card h2 {
+        font-size: 1.25rem;
+    }
+    
+    .patient-vitals-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .vital-item {
+        padding: 0.75rem;
+    }
+    
+    .vital-item .value {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .results-header {
+        padding: 1rem;
+    }
+    
+    .clinical-scores {
+        grid-template-columns: 1fr;
+    }
+    
+    .score-item {
+        padding: 0.75rem;
+    }
+    
+    .score-value {
+        font-size: 1.5rem;
+    }
+    
+    .recommendations-list li,
+    .precautions-list li,
+    .education-list li {
+        padding: 10px 14px;
+        font-size: 13.5px;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .timeline-time {
+        align-self: flex-start;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.75rem;
+    }
+    
+    .monitoring-schedule,
+    .lab-monitoring-schedule,
+    .intervention-timeline {
+        padding: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* Mobile About Page */
+@media (max-width: 768px) {
+    .about-section {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .about-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-boxes {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-box {
+        padding: 1.5rem;
+    }
+    
+    .stat-box h3 {
+        font-size: 2rem;
+    }
+    
+    .workflow-detail {
+        gap: 1.5rem;
+    }
+    
+    .workflow-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .workflow-number {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .scoring-grid,
+    .model-details,
+    .tech-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .scoring-card,
+    .model-card,
+    .tech-card {
+        padding: 1rem;
+    }
+    
+    .dataset-features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .disclaimer-box {
+        padding: 1rem;
+    }
+    
+    .references li {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+    .btn,
+    .nav-link,
+    input,
+    select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .form-control {
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 8px;
+    }
+}
+
+/* Improved scrolling on mobile */
+@media (max-width: 768px) {
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .prediction-result {
+        overflow-y: visible;
+    }
+}
+
+/* Footer mobile adjustments */
+@media (max-width: 768px) {
+    .footer {
+        padding: 1.5rem 0;
+        margin-top: 2rem;
+    }
+    
+    .footer p {
+        font-size: 0.85rem;
+    }
+    
+    .footer .disclaimer {
+        font-size: 0.8rem;
+    }
+}
+
+/* Landscape mobile adjustments */
+@media (max-width: 968px) and (orientation: landscape) {
+    .hero-section {
+        padding: 1.5rem 0;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 360px) {
+    .nav-brand {
+        font-size: 1rem;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+    }
+}
+
+/* Accessibility improvements for mobile */
+@media (max-width: 768px) {
+    /* Larger text for readability */
+    body {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    
+    /* Better contrast for small screens */
+    .form-control:focus {
+        border-width: 2px;
+    }
+    
+    /* More spacing for touch targets */
+    .vital-item,
+    .recommendations-list li,
+    .precautions-list li {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* Print styles remain the same but adjusted */
+@media print {
+    .navbar, 
+    .action-buttons, 
+    .page-header,
+    .footer,
+    .hero-buttons,
+    .form-actions {
+        display: none !important;
+    }
+}
+
+        .demographics-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .gender-select {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .gender-option {
+            flex: 1;
+            position: relative;
+        }
+        
+        .gender-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .gender-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 500;
+        }
+        
+        .gender-option input[type="radio"]:checked + label {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        
+        .gender-option label:hover {
+            border-color: #2563eb;
+        }
+        
+        .gender-option i {
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .demographics-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .gender-select {
+                flex-direction: row;
+            }
+        }

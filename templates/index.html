@@ -6,14 +6,16 @@
     <title>Sepsis Early Prediction System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <i class="fas fa-heartbeat"></i>
+                <img src="{{url_for('static', filename='images/image.png') }}"
+                alt="Sepsis Prediction System logo"
+                class="app-logo">
                 <span>Sepsis Prediction System</span>
             </div>
             <ul class="nav-menu">
@@ -52,49 +54,37 @@
             <h2 class="section-title">System Capabilities</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
+                    <div class="feature-icon">🧠</div>
                     <h3>AI-Powered Analysis</h3>
                     <p>Random Forest machine learning model trained on thousands of ICU patient records for accurate risk assessment</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-hospital"></i>
-                    </div>
+                    <div class="feature-icon">🏥</div>
                     <h3>Clinical Scores</h3>
                     <p>Automatic calculation of SOFA and SIRS scores based on patient vitals and laboratory values</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-flag"></i>
-                    </div>
+                    <div class="feature-icon">🚩</div>
                     <h3>Risk Flags</h3>
                     <p>Real-time detection of critical thresholds including tachycardia, hypotension, fever, and abnormal labs</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
+                    <div class="feature-icon">📊</div>
                     <h3>Risk Stratification</h3>
                     <p>Four-level risk classification (Low, Moderate, High, Very High) with probability scores</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
+                    <div class="feature-icon">🔔</div>
                     <h3>Clinical Alerts</h3>
                     <p>Automated alerts for abnormal vital signs and laboratory values requiring attention</p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
+                    <div class="feature-icon">📋</div>
                     <h3>Recommendations</h3>
                     <p>Evidence-based clinical recommendations tailored to the patient's risk level</p>
                 </div>

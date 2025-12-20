@@ -1,6 +1,6 @@
 """
 Sepsis Early Prediction System - Data Preprocessing Module
-Pre-trained model approach
+Enhanced with age and gender features
 """
 
 import pandas as pd
@@ -15,8 +15,23 @@ class SepsisDataPreprocessor:
         self.feature_names = []
         
     def create_smart_features(self, patient_data):
-        """Create advanced clinical features from patient data"""
+        """Create advanced clinical features from patient data including age and gender"""
         df = pd.DataFrame([patient_data])
+        
+        # Extract demographics
+        age = patient_data.get('Age', 50)
+        gender = patient_data.get('Gender', 1)  # 1=Male, 0=Female
+        
+        # Age-based risk factors
+        df['age_high_risk'] = 1 if age >= 65 else 0
+        df['age_very_high_risk'] = 1 if age >= 75 else 0
+        df['age_pediatric'] = 1 if age < 18 else 0
+        
+        # Gender-based features (males have slightly higher sepsis risk)
+        df['gender_male'] = gender
+        
+        # Age-gender interaction
+        df['elderly_male'] = 1 if (age >= 65 and gender == 1) else 0
         
         # 1. SOFA-inspired indicators
         # Respiratory score
@@ -43,10 +58,11 @@ class SepsisDataPreprocessor:
         if platelets < 100:
             df['coag_score'] = 2
         
-        # Renal score
+        # Renal score (adjusted for age)
         creatinine = patient_data.get('Creatinine', 1.0)
+        creat_threshold = 1.2 if age < 65 else 1.4  # Higher threshold for elderly
         df['renal_score'] = 0
-        if creatinine > 1.2:
+        if creatinine > creat_threshold:
             df['renal_score'] = 1
         if creatinine > 2.0:
             df['renal_score'] = 2
@@ -81,7 +97,6 @@ class SepsisDataPreprocessor:
             df['qSOFA_approx'] += 1
         if sbp <= 100:
             df['qSOFA_approx'] += 1
-        # Mental status would be third criterion
         
         # SIRS criteria count
         df['SIRS_count'] = 0
@@ -103,6 +118,13 @@ class SepsisDataPreprocessor:
         df['multi_organ_risk'] = (df['SOFA_approx'] >= 2).astype(int)
         df['severe_risk'] = (df['SIRS_count'] >= 3).astype(int)
         
+        # 6. Age-adjusted risk scores
+        age_factor = 1.2 if age >= 65 else 1.0
+        age_factor = age_factor * 1.3 if age >= 75 else age_factor
+        
+        df['age_adjusted_sofa'] = df['SOFA_approx'] * age_factor
+        df['age_adjusted_sirs'] = df['SIRS_count'] * age_factor
+        
         return df
     
     def prepare_for_prediction(self, patient_data):
@@ -111,16 +133,21 @@ class SepsisDataPreprocessor:
         df = self.create_smart_features(patient_data)
         
         # Define expected features (must match training)
-        base_features = ['HR', 'O2Sat', 'Temp', 'SBP', 'MAP', 'DBP', 'Resp', 
+        base_features = ['Age', 'Gender', 'HR', 'O2Sat', 'Temp', 'SBP', 'MAP', 'DBP', 'Resp', 
                         'WBC', 'Platelets', 'Creatinine', 'Lactate']
         
-        engineered_features = ['resp_score', 'cardio_score', 'coag_score', 'renal_score',
-                              'SOFA_approx', 'high_HR_flag', 'very_high_HR_flag',
-                              'low_SBP_flag', 'very_low_SBP_flag', 'fever_flag',
-                              'hypothermia_flag', 'high_resp_flag', 'high_WBC_flag',
-                              'low_WBC_flag', 'qSOFA_approx', 'SIRS_count',
-                              'cardio_risk', 'resp_risk', 'metabolic_risk',
-                              'multi_organ_risk', 'severe_risk']
+        engineered_features = [
+            'age_high_risk', 'age_very_high_risk', 'age_pediatric',
+            'gender_male', 'elderly_male',
+            'resp_score', 'cardio_score', 'coag_score', 'renal_score',
+            'SOFA_approx', 'high_HR_flag', 'very_high_HR_flag',
+            'low_SBP_flag', 'very_low_SBP_flag', 'fever_flag',
+            'hypothermia_flag', 'high_resp_flag', 'high_WBC_flag',
+            'low_WBC_flag', 'qSOFA_approx', 'SIRS_count',
+            'cardio_risk', 'resp_risk', 'metabolic_risk',
+            'multi_organ_risk', 'severe_risk',
+            'age_adjusted_sofa', 'age_adjusted_sirs'
+        ]
         
         all_features = base_features + engineered_features
         
@@ -138,7 +165,7 @@ class SepsisDataPreprocessor:
         return X, all_features
 
 def generate_pretrained_model_data():
-    """Generate training data for the pre-trained model"""
+    """Generate training data for the pre-trained model with age and gender"""
     np.random.seed(42)
     
     data = []
@@ -147,6 +174,19 @@ def generate_pretrained_model_data():
     for patient_id in range(1, n_patients + 1):
         # 35% develop sepsis
         develops_sepsis = np.random.random() < 0.35
+        
+        # Generate age (more elderly patients tend to develop sepsis)
+        if develops_sepsis:
+            age = int(np.random.normal(68, 15))  # Older mean age for sepsis
+        else:
+            age = int(np.random.normal(55, 18))  # Younger mean age for non-sepsis
+        age = max(18, min(95, age))  # Clamp between 18-95
+        
+        # Generate gender (slightly more males develop sepsis)
+        if develops_sepsis:
+            gender = 1 if np.random.random() < 0.55 else 0  # 55% male
+        else:
+            gender = 1 if np.random.random() < 0.48 else 0  # 48% male
         
         if develops_sepsis:
             # Septic patient characteristics
@@ -175,6 +215,8 @@ def generate_pretrained_model_data():
         
         row = {
             'PatientID': patient_id,
+            'Age': age,
+            'Gender': gender,
             'HR': max(40, min(180, hr)),
             'O2Sat': max(70, min(100, o2sat)),
             'Temp': max(34, min(42, temp)),
@@ -195,5 +237,7 @@ def generate_pretrained_model_data():
     df.to_csv('sepsis_training_data.csv', index=False)
     print(f"Generated training dataset: {len(df)} patients")
     print(f"Sepsis cases: {df['SepsisLabel'].sum()} ({df['SepsisLabel'].mean()*100:.1f}%)")
+    print(f"Age range: {df['Age'].min()}-{df['Age'].max()} years")
+    print(f"Gender distribution: {df['Gender'].mean()*100:.1f}% male")
     
     return df

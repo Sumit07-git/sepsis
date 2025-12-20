@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Prediction Results - Sepsis Early Prediction</title>
     
     <!-- Main Stylesheet -->
@@ -13,9 +13,7 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
@@ -23,7 +21,9 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <i class="fas fa-heartbeat"></i>
+                <img src="{{url_for('static', filename='images/image.png') }}"
+                alt="Sepsis Prediction System logo"
+                class="app-logo">
                 <span>Sepsis Prediction System</span>
             </div>
             <ul class="nav-menu">
@@ -37,8 +37,8 @@
     <!-- Page Header -->
     <div class="page-header">
         <div class="container">
-            <h1><i class="fas fa-file-medical"></i> Detailed Prediction Results</h1>
-            <p>Comprehensive risk assessment and clinical recommendations</p>
+            <h1><i class="fas fa-file-medical"></i> Assessment Results</h1>
+            <p>Comprehensive risk analysis and clinical recommendations</p>
         </div>
     </div>
 
@@ -59,6 +59,20 @@
                 </div>
                 <h2 class="risk-level">{{ results.risk_level }} RISK</h2>
                 <p class="risk-probability">Sepsis Probability: {{ "%.1f"|format(results.probability * 100) }}%</p>
+                
+                <!-- Patient Demographics Display -->
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <p style="font-size: 0.95rem; opacity: 0.95;">
+                        <i class="fas fa-user"></i> 
+                        {{ results.patient_data.Age }} years old | 
+                        {% if results.patient_data.Gender == 1 %}
+                            <i class="fas fa-mars"></i> Male
+                        {% else %}
+                            <i class="fas fa-venus"></i> Female
+                        {% endif %}
+                    </p>
+                </div>
+                
                 <div class="clinical-scores">
                     <div class="score-item">
                         <h4>SOFA Score</h4>
@@ -76,65 +90,6 @@
         </div>
 
         <div class="results-grid">
-            <!-- Patient Vitals -->
-            <!-- <div class="results-card">
-                <h2><i class="fas fa-heartbeat"></i> Patient Vitals</h2>
-                <div class="patient-vitals-grid">
-                    <div class="vital-item">
-                        <label>Heart Rate</label>
-                        <div class="value">{{ results.patient_data.HR }} <span class="unit">bpm</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Temperature</label>
-                        <div class="value">{{ results.patient_data.Temp }} <span class="unit">°C</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Respiratory Rate</label>
-                        <div class="value">{{ results.patient_data.Resp }} <span class="unit">/min</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>O2 Saturation</label>
-                        <div class="value">{{ results.patient_data.O2Sat }} <span class="unit">%</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Systolic BP</label>
-                        <div class="value">{{ results.patient_data.SBP }} <span class="unit">mmHg</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Diastolic BP</label>
-                        <div class="value">{{ results.patient_data.DBP }} <span class="unit">mmHg</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>MAP</label>
-                        <div class="value">{{ results.patient_data.MAP }} <span class="unit">mmHg</span></div>
-                    </div>
-                </div>
-            </div> -->
-
-            <!-- Laboratory Values -->
-            <!-- <div class="results-card">
-                <h2><i class="fas fa-flask"></i> Laboratory Values</h2>
-                <div class="patient-vitals-grid">
-                    <div class="vital-item">
-                        <label>WBC Count</label>
-                        <div class="value">{{ results.patient_data.WBC }} <span class="unit">×10³/μL</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Platelets</label>
-                        <div class="value">{{ results.patient_data.Platelets }} <span class="unit">×10³/μL</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Creatinine</label>
-                        <div class="value">{{ results.patient_data.Creatinine }} <span class="unit">mg/dL</span></div>
-                    </div>
-                    <div class="vital-item">
-                        <label>Lactate</label>
-                        <div class="value">{{ results.patient_data.Lactate }} <span class="unit">mmol/L</span></div>
-                    </div>
-                </div>
-            </div> -->
-
-            <!-- Clinical Alerts -->
             {% if results.alerts %}
             <div class="results-card full-width">
                 <h2><i class="fas fa-bell"></i> Clinical Alerts</h2>
@@ -208,7 +163,12 @@
                         <li><i class="fas fa-brain"></i> Monitor <strong>mental status</strong> changes that may indicate septic encephalopathy</li>
                         <li><i class="fas fa-tint"></i> Maintain <strong>strict intake/output</strong> monitoring for fluid balance</li>
                         <li><i class="fas fa-pump-medical"></i> Assess <strong>peripheral perfusion</strong> (capillary refill, skin mottling)</li>
-                        <li><i class="fas fa-pills"></i> Review all medications for potential interactions or contraindications</li>
+                        
+                        {% if results.patient_data.Age >= 65 %}
+                        <li><i class="fas fa-user-clock"></i> <strong>Elderly patient considerations:</strong> Monitor for delirium, functional decline, and falls risk</li>
+                        <li><i class="fas fa-pills"></i> Review medication list carefully - elderly at higher risk for adverse effects</li>
+                        {% endif %}
+                        
                         <li><i class="fas fa-bed"></i> Implement <strong>pressure ulcer prevention</strong> protocols (patient may be critically ill)</li>
                         <li><i class="fas fa-ban"></i> Avoid unnecessary invasive procedures if possible</li>
                         <li><i class="fas fa-users"></i> Limit visitors and ensure they follow infection control protocols</li>
@@ -350,6 +310,12 @@
             </a>
         </div>
 
+        <!-- Disclaimer -->
+        <div class="disclaimer-box">
+            <h2><i class="fas fa-exclamation-triangle"></i> Medical Disclaimer</h2>
+            <p><strong>This is an AI-assisted educational tool and should not replace clinical judgment.</strong></p>
+            <p>All predictions must be validated by qualified healthcare professionals. Always follow your institution's sepsis protocols and consult with physicians for patient care decisions.</p>
+        </div>
     </div>
 
     <!-- Footer -->

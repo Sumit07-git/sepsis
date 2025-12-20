@@ -6,14 +6,16 @@
     <title>About - Sepsis Early Prediction</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <i class="fas fa-heartbeat"></i>
+                <img src="{{url_for('static', filename='images/image.png') }}"
+                alt="Sepsis Prediction System logo"
+                class="app-logo">
                 <span>Sepsis Prediction System</span>
             </div>
             <ul class="nav-menu">
@@ -268,25 +270,6 @@
             </div>
         </div>
 
-        <div class="about-section disclaimer-section">
-            <h2><i class="fas fa-exclamation-triangle"></i> Important Disclaimer</h2>
-            <div class="disclaimer-box">
-                <p><strong>This system is for educational and research purposes only.</strong></p>
-                <p>
-                    This sepsis prediction system is designed as a demonstration of machine learning 
-                    applications in healthcare and should NOT be used for actual clinical decision-making 
-                    without proper validation, regulatory approval, and oversight by qualified healthcare professionals.
-                </p>
-                <ul>
-                    <li>Not FDA approved or clinically validated</li>
-                    <li>Should not replace clinical judgment</li>
-                    <li>Predictions are probabilistic, not definitive</li>
-                    <li>Always consult qualified healthcare providers</li>
-                    <li>Follow institutional sepsis protocols</li>
-                </ul>
-            </div>
-        </div>
-
         <div class="about-section">
             <h2>References</h2>
             <div class="references">
@@ -315,8 +298,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
-            <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>
+            <p>&copy; 2025 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
         </div>
     </footer>
 </body>

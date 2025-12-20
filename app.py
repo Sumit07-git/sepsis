@@ -1,6 +1,6 @@
 """
 Sepsis Early Prediction System - Flask Web Application
-Enhanced version with separate results page
+Enhanced version with gender, age, and mobile-responsive design
 """
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
@@ -60,8 +60,10 @@ def predict():
                     'message': 'Model not loaded. Please run model_trainer.py first.'
                 }), 500
             
-            # Get patient data from form
+            # Get patient data from form including gender and age
             patient_data = {
+                'Age': int(request.form.get('Age', 50)),
+                'Gender': int(request.form.get('Gender', 1)),  # 1=Male, 0=Female
                 'HR': float(request.form.get('HR', 80)),
                 'O2Sat': float(request.form.get('O2Sat', 95)),
                 'Temp': float(request.form.get('Temp', 37)),
@@ -121,6 +123,10 @@ def predict():
                 alerts.append('Thrombocytopenia detected')
             if patient_data['Creatinine'] > 1.2:
                 alerts.append('Elevated creatinine')
+            
+            # Add age-specific alerts
+            if patient_data['Age'] >= 65:
+                alerts.append('Elderly patient - increased sepsis risk')
             
             # Store results in session for results page
             session['prediction_results'] = {
@@ -193,9 +199,10 @@ if __name__ == '__main__':
         print("Access the application at: http://127.0.0.1:5000")
         print("\nFeatures:")
         print("- Real-time sepsis risk prediction")
+        print("- Age and gender-based assessment")
         print("- SOFA & SIRS score calculation")
         print("- Clinical alerts and recommendations")
-        print("- Detailed results page with precautions")
+        print("- Mobile-responsive design")
         print("- Pre-trained Random Forest model")
         print("="*60 + "\n")
         

@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Predict - Sepsis Early Prediction</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <i class="fas fa-heartbeat"></i>
+                <img src="{{url_for('static', filename='images/image.png') }}"
+                alt="Sepsis Prediction System logo"
+                class="app-logo">
                 <span>Sepsis Prediction System</span>
             </div>
             <ul class="nav-menu">
@@ -28,7 +30,7 @@
     <div class="page-header">
         <div class="container">
             <h1><i class="fas fa-stethoscope"></i> Sepsis Risk Assessment</h1>
-            <p>Enter patient vital signs and laboratory values for AI-powered sepsis prediction</p>
+            <p>Enter patient demographics, vital signs, and laboratory values</p>
         </div>
     </div>
 
@@ -38,6 +40,41 @@
             <div class="prediction-form-container">
                 <h2>Patient Data Input</h2>
                 <form id="predictionForm" method="POST" action="/predict" class="prediction-form">
+                    
+                    <!-- Demographics Section -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Patient Demographics</h3>
+                        
+                        <div class="demographics-row">
+                            <div class="form-group">
+                                <label for="Age">Age (years)</label>
+                                <input type="number" id="Age" name="Age" class="form-control" 
+                                       value="50" min="1" max="120" step="1" required>
+                                <small>Age is a significant sepsis risk factor</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <div class="gender-select">
+                                    <div class="gender-option">
+                                        <input type="radio" id="male" name="Gender" value="1" checked>
+                                        <label for="male">
+                                            <i class="fas fa-mars"></i> Male
+                                        </label>
+                                    </div>
+                                    <div class="gender-option">
+                                        <input type="radio" id="female" name="Gender" value="0">
+                                        <label for="female">
+                                            <i class="fas fa-venus"></i> Female
+                                        </label>
+                                    </div>
+                                </div>
+                                <small>Gender affects sepsis risk and outcomes</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vital Signs Section -->
                     <div class="form-section">
                         <h3><i class="fas fa-heartbeat"></i> Vital Signs</h3>
                         
@@ -99,6 +136,7 @@
                         </div>
                     </div>
 
+                    <!-- Laboratory Values Section -->
                     <div class="form-section">
                         <h3><i class="fas fa-flask"></i> Laboratory Values</h3>
                         
@@ -155,12 +193,12 @@
                 
                 <div class="risk-details">
                     <h4><i class="fas fa-info-circle"></i> About This Assessment</h4>
-                    <p>This AI-powered system analyzes patient vital signs and laboratory values to predict sepsis risk using:</p>
+                    <p>This AI-powered system analyzes patient data including:</p>
                     <ul>
-                        <li>Random Forest machine learning model</li>
-                        <li>SOFA and SIRS clinical scoring</li>
-                        <li>32 engineered clinical features</li>
-                        <li>Evidence-based risk thresholds</li>
+                        <li><strong>Demographics:</strong> Age and gender</li>
+                        <li><strong>Vital Signs:</strong> HR, BP, Temp, RR, O2Sat</li>
+                        <li><strong>Lab Values:</strong> WBC, Platelets, Creatinine, Lactate</li>
+                        <li><strong>Clinical Scores:</strong> SOFA, SIRS, qSOFA</li>
                     </ul>
 
                     <h4><i class="fas fa-flag"></i> Risk Categories</h4>
@@ -169,6 +207,14 @@
                         <li><strong>HIGH (50-69%):</strong> Elevated risk, urgent review needed</li>
                         <li><strong>MODERATE (30-49%):</strong> Some concerns, enhanced monitoring</li>
                         <li><strong>LOW (&lt;30%):</strong> Minimal risk, routine care</li>
+                    </ul>
+
+                    <h4><i class="fas fa-user-shield"></i> Age & Gender Factors</h4>
+                    <ul>
+                        <li><strong>Age ≥65:</strong> Increased sepsis risk and mortality</li>
+                        <li><strong>Age ≥75:</strong> Very high risk group</li>
+                        <li><strong>Males:</strong> Slightly higher sepsis incidence</li>
+                        <li><strong>Elderly Males:</strong> Highest risk combination</li>
                     </ul>
 
                     <h4><i class="fas fa-heartbeat"></i> Normal Ranges</h4>
@@ -213,6 +259,9 @@
         }
 
         function loadSepsisExample() {
+            // Elderly male with sepsis
+            document.getElementById('Age').value = 72;
+            document.getElementById('male').checked = true;
             document.getElementById('HR').value = 118;
             document.getElementById('Temp').value = 38.8;
             document.getElementById('Resp').value = 26;
@@ -227,6 +276,9 @@
         }
 
         function loadNormalExample() {
+            // Middle-aged female with normal vitals
+            document.getElementById('Age').value = 45;
+            document.getElementById('female').checked = true;
             document.getElementById('HR').value = 75;
             document.getElementById('Temp').value = 36.8;
             document.getElementById('Resp').value = 14;
