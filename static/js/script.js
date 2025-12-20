@@ -396,6 +396,53 @@ function showNetworkStatus(status) {
     }, 3000);
 }
 
+document.getElementById('SBP').addEventListener('input', calculateMAP);
+        document.getElementById('DBP').addEventListener('input', calculateMAP);
+
+        function calculateMAP() {
+            const sbp = parseFloat(document.getElementById('SBP').value);
+            const dbp = parseFloat(document.getElementById('DBP').value);
+            
+            if (!isNaN(sbp) && !isNaN(dbp)) {
+                const map = Math.round((sbp + 2 * dbp) / 3);
+                document.getElementById('MAP').value = map;
+            }
+        }
+
+        function loadSepsisExample() {
+            // Elderly male with sepsis
+            document.getElementById('Age').value = 72;
+            document.getElementById('male').checked = true;
+            document.getElementById('HR').value = 118;
+            document.getElementById('Temp').value = 38.8;
+            document.getElementById('Resp').value = 26;
+            document.getElementById('O2Sat').value = 89;
+            document.getElementById('SBP').value = 85;
+            document.getElementById('DBP').value = 52;
+            document.getElementById('MAP').value = 63;
+            document.getElementById('WBC').value = 16.5;
+            document.getElementById('Platelets').value = 95;
+            document.getElementById('Creatinine').value = 2.3;
+            document.getElementById('Lactate').value = 4.2;
+        }
+
+        function loadNormalExample() {
+            // Middle-aged female with normal vitals
+            document.getElementById('Age').value = 45;
+            document.getElementById('female').checked = true;
+            document.getElementById('HR').value = 75;
+            document.getElementById('Temp').value = 36.8;
+            document.getElementById('Resp').value = 14;
+            document.getElementById('O2Sat').value = 98;
+            document.getElementById('SBP').value = 125;
+            document.getElementById('DBP').value = 75;
+            document.getElementById('MAP').value = 92;
+            document.getElementById('WBC').value = 7.2;
+            document.getElementById('Platelets').value = 240;
+            document.getElementById('Creatinine').value = 0.9;
+            document.getElementById('Lactate').value = 1.1;
+        }
+
 /**
  * Add CSS animations
  */
