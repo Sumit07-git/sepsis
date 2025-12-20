@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results - Sepsis Early Prediction</title>
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Results Page Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>Sepsis Prediction System</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/predict" class="nav-link"><i class="fas fa-stethoscope"></i> Predict</a></li>
+                <li><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-file-medical"></i> Detailed Prediction Results</h1>
+            <p>Comprehensive risk assessment and clinical recommendations</p>
+        </div>
+    </div>
+
+    <div class="results-container">
+        <!-- Results Header with Risk Display -->
+        <div class="results-header">
+            <div class="risk-display risk-{{ results.risk_class }}">
+                <div class="risk-icon">
+                    {% if results.risk_level == 'VERY HIGH' %}
+                        <i class="fas fa-skull-crossbones"></i>
+                    {% elif results.risk_level == 'HIGH' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif results.risk_level == 'MODERATE' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                    {% else %}
+                        <i class="fas fa-check-circle"></i>
+                    {% endif %}
+                </div>
+                <h2 class="risk-level">{{ results.risk_level }} RISK</h2>
+                <p class="risk-probability">Sepsis Probability: {{ "%.1f"|format(results.probability * 100) }}%</p>
+                <div class="clinical-scores">
+                    <div class="score-item">
+                        <h4>SOFA Score</h4>
+                        <p class="score-value" id="sofaScore">{{ results.sofa_score }}</p>
+                    </div>
+                    <div class="score-item">
+                        <h4>SIRS Count</h4>
+                        <p class="score-value" id="sirsCount">{{ results.sirs_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <p class="results-timestamp">
+                <i class="fas fa-clock"></i> Assessment Time: {{ results.timestamp }}
+            </p>
+        </div>
+
+        <div class="results-grid">
+            <!-- Patient Vitals -->
+            <!-- <div class="results-card">
+                <h2><i class="fas fa-heartbeat"></i> Patient Vitals</h2>
+                <div class="patient-vitals-grid">
+                    <div class="vital-item">
+                        <label>Heart Rate</label>
+                        <div class="value">{{ results.patient_data.HR }} <span class="unit">bpm</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Temperature</label>
+                        <div class="value">{{ results.patient_data.Temp }} <span class="unit">°C</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Respiratory Rate</label>
+                        <div class="value">{{ results.patient_data.Resp }} <span class="unit">/min</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>O2 Saturation</label>
+                        <div class="value">{{ results.patient_data.O2Sat }} <span class="unit">%</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Systolic BP</label>
+                        <div class="value">{{ results.patient_data.SBP }} <span class="unit">mmHg</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Diastolic BP</label>
+                        <div class="value">{{ results.patient_data.DBP }} <span class="unit">mmHg</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>MAP</label>
+                        <div class="value">{{ results.patient_data.MAP }} <span class="unit">mmHg</span></div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Laboratory Values -->
+            <!-- <div class="results-card">
+                <h2><i class="fas fa-flask"></i> Laboratory Values</h2>
+                <div class="patient-vitals-grid">
+                    <div class="vital-item">
+                        <label>WBC Count</label>
+                        <div class="value">{{ results.patient_data.WBC }} <span class="unit">×10³/μL</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Platelets</label>
+                        <div class="value">{{ results.patient_data.Platelets }} <span class="unit">×10³/μL</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Creatinine</label>
+                        <div class="value">{{ results.patient_data.Creatinine }} <span class="unit">mg/dL</span></div>
+                    </div>
+                    <div class="vital-item">
+                        <label>Lactate</label>
+                        <div class="value">{{ results.patient_data.Lactate }} <span class="unit">mmol/L</span></div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Clinical Alerts -->
+            {% if results.alerts %}
+            <div class="results-card full-width">
+                <h2><i class="fas fa-bell"></i> Clinical Alerts</h2>
+                <div class="clinical-alerts">
+                    <ul class="precautions-list">
+                        {% for alert in results.alerts %}
+                        <li>
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>{{ alert }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Clinical Recommendations -->
+            <div class="results-card full-width">
+                <h2><i class="fas fa-clipboard-list"></i> Clinical Recommendations</h2>
+                <ul class="recommendations-list">
+                    {% if results.risk_level == 'VERY HIGH' %}
+                        <li><i class="fas fa-exclamation-triangle"></i> <strong>IMMEDIATE physician notification required</strong></li>
+                        <li><i class="fas fa-syringe"></i> Obtain blood cultures before antibiotics (at least 2 sets from different sites)</li>
+                        <li><i class="fas fa-pills"></i> Begin broad-spectrum antibiotics within 1 hour (following sepsis protocol)</li>
+                        <li><i class="fas fa-tint"></i> Aggressive fluid resuscitation: 30 mL/kg crystalloid within first 3 hours</li>
+                        <li><i class="fas fa-procedures"></i> Consider vasopressor therapy if hypotension persists after fluid resuscitation</li>
+                        <li><i class="fas fa-hospital"></i> Immediate ICU transfer if not already in ICU setting</li>
+                        <li><i class="fas fa-lungs"></i> Assess need for mechanical ventilation support</li>
+                        <li><i class="fas fa-chart-line"></i> Place arterial line for continuous blood pressure monitoring</li>
+                        <li><i class="fas fa-vial"></i> Reassess lactate within 2-4 hours to guide resuscitation</li>
+                        <li><i class="fas fa-user-md"></i> Consult critical care and infectious disease specialists</li>
+                    {% elif results.risk_level == 'HIGH' %}
+                        <li><i class="fas fa-phone"></i> Urgent physician notification within 15-30 minutes</li>
+                        <li><i class="fas fa-search"></i> Thorough assessment for source of infection (exam, imaging, cultures)</li>
+                        <li><i class="fas fa-syringe"></i> Consider obtaining blood cultures if infection suspected</li>
+                        <li><i class="fas fa-tint"></i> Initiate fluid resuscitation if hypotensive or showing signs of poor perfusion</li>
+                        <li><i class="fas fa-pills"></i> Consider early empiric antibiotics if strong clinical suspicion</li>
+                        <li><i class="fas fa-heartbeat"></i> Continuous cardiac monitoring recommended</li>
+                        <li><i class="fas fa-notes-medical"></i> Document detailed clinical assessment and trending</li>
+                        <li><i class="fas fa-user-md"></i> Consider critical care consultation</li>
+                        <li><i class="fas fa-redo"></i> Reassess clinical status and repeat labs in 1-2 hours</li>
+                    {% elif results.risk_level == 'MODERATE' %}
+                        <li><i class="fas fa-stethoscope"></i> Clinical review by physician within 2-4 hours</li>
+                        <li><i class="fas fa-search"></i> Evaluate for signs and symptoms of infection</li>
+                        <li><i class="fas fa-thermometer"></i> Monitor vital signs every 2 hours or more frequently if indicated</li>
+                        <li><i class="fas fa-vial"></i> Consider repeat laboratory values in 4-6 hours to assess trends</li>
+                        <li><i class="fas fa-notes-medical"></i> Document baseline values for trending and comparison</li>
+                        <li><i class="fas fa-clipboard-check"></i> Ensure adequate hydration status</li>
+                        <li><i class="fas fa-bell"></i> Set alerts for vital sign deterioration</li>
+                        <li><i class="fas fa-redo"></i> Reassess if any clinical status changes occur</li>
+                    {% else %}
+                        <li><i class="fas fa-check"></i> Continue routine monitoring per institutional protocols</li>
+                        <li><i class="fas fa-heartbeat"></i> Maintain standard vital sign frequency</li>
+                        <li><i class="fas fa-clipboard"></i> Document baseline values for future reference</li>
+                        <li><i class="fas fa-bell"></i> Reassess if clinical status changes or new symptoms develop</li>
+                        <li><i class="fas fa-user-nurse"></i> Continue standard nursing care protocols</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Precautions and Prevention -->
+            <div class="results-card full-width">
+                <h2><i class="fas fa-shield-alt"></i> Precautions & Prevention Measures</h2>
+                <ul class="precautions-list">
+                    {% if results.risk_level in ['VERY HIGH', 'HIGH'] %}
+                        <li><i class="fas fa-hand-sparkles"></i> <strong>Strict hand hygiene</strong> before and after all patient contact</li>
+                        <li><i class="fas fa-user-shield"></i> Implement appropriate <strong>isolation precautions</strong> based on suspected infection source</li>
+                        <li><i class="fas fa-syringe"></i> <strong>Sterile technique</strong> for all invasive procedures and line management</li>
+                        <li><i class="fas fa-temperature-high"></i> Monitor for <strong>fever spikes</strong> or temperature instability</li>
+                        <li><i class="fas fa-lungs-virus"></i> Assess respiratory status regularly for signs of ARDS or respiratory failure</li>
+                        <li><i class="fas fa-brain"></i> Monitor <strong>mental status</strong> changes that may indicate septic encephalopathy</li>
+                        <li><i class="fas fa-tint"></i> Maintain <strong>strict intake/output</strong> monitoring for fluid balance</li>
+                        <li><i class="fas fa-pump-medical"></i> Assess <strong>peripheral perfusion</strong> (capillary refill, skin mottling)</li>
+                        <li><i class="fas fa-pills"></i> Review all medications for potential interactions or contraindications</li>
+                        <li><i class="fas fa-bed"></i> Implement <strong>pressure ulcer prevention</strong> protocols (patient may be critically ill)</li>
+                        <li><i class="fas fa-ban"></i> Avoid unnecessary invasive procedures if possible</li>
+                        <li><i class="fas fa-users"></i> Limit visitors and ensure they follow infection control protocols</li>
+                    {% else %}
+                        <li><i class="fas fa-hand-sparkles"></i> Maintain proper hand hygiene protocols</li>
+                        <li><i class="fas fa-procedures"></i> Use sterile technique for invasive line care</li>
+                        <li><i class="fas fa-syringe"></i> Monitor catheter and IV sites for signs of infection</li>
+                        <li><i class="fas fa-thermometer"></i> Watch for development of fever or abnormal vital signs</li>
+                        <li><i class="fas fa-shield-virus"></i> Maintain infection prevention best practices</li>
+                        <li><i class="fas fa-bed"></i> Ensure adequate mobilization and respiratory hygiene</li>
+                        <li><i class="fas fa-tint"></i> Monitor hydration status and encourage oral fluids if appropriate</li>
+                        <li><i class="fas fa-clipboard-check"></i> Continue routine assessments per protocol</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Monitoring Schedule -->
+            <div class="results-card">
+                <h2><i class="fas fa-clock"></i> Monitoring Schedule</h2>
+                <div class="monitoring-schedule">
+                    <h4><i class="fas fa-heartbeat"></i> Vital Signs Frequency</h4>
+                    <ul>
+                        {% if results.risk_level == 'VERY HIGH' %}
+                            <li><strong>Every 15 minutes</strong> until stable, then every 30 minutes</li>
+                            <li>Continuous cardiac monitoring with telemetry</li>
+                            <li>Continuous pulse oximetry</li>
+                            <li>Arterial line for continuous blood pressure monitoring</li>
+                        {% elif results.risk_level == 'HIGH' %}
+                            <li><strong>Every 30-60 minutes</strong> or per physician order</li>
+                            <li>Continuous cardiac monitoring recommended</li>
+                            <li>Frequent oxygen saturation checks</li>
+                        {% elif results.risk_level == 'MODERATE' %}
+                            <li><strong>Every 2 hours</strong> or per institutional protocol</li>
+                            <li>Consider cardiac monitoring if clinical indicators present</li>
+                        {% else %}
+                            <li><strong>Every 4 hours</strong> or per routine protocol</li>
+                            <li>Standard monitoring procedures</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="monitoring-schedule lab-monitoring-schedule">
+                    <h4><i class="fas fa-vial"></i> Laboratory Reassessment</h4>
+                    <ul>
+                        {% if results.risk_level == 'VERY HIGH' %}
+                            <li>Repeat lactate in <strong>2-4 hours</strong></li>
+                            <li>CBC, BMP every <strong>6-12 hours</strong></li>
+                            <li>Blood cultures if febrile or suspected bacteremia</li>
+                            <li>Arterial blood gas as clinically indicated</li>
+                        {% elif results.risk_level == 'HIGH' %}
+                            <li>Repeat labs in <strong>4-6 hours</strong> to assess trends</li>
+                            <li>Consider lactate if initially elevated</li>
+                            <li>Blood cultures if clinical suspicion increases</li>
+                        {% elif results.risk_level == 'MODERATE' %}
+                            <li>Repeat labs in <strong>6-12 hours</strong> or as ordered</li>
+                            <li>Trend values for early detection of changes</li>
+                        {% else %}
+                            <li>Routine lab monitoring per protocol</li>
+                            <li>Reassess if clinical status changes</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Intervention Timeline (for high-risk patients) -->
+            {% if results.risk_level in ['VERY HIGH', 'HIGH'] %}
+            <div class="results-card">
+                <h2><i class="fas fa-stopwatch"></i> Critical Intervention Timeline</h2>
+                <div class="intervention-timeline">
+                    <h4><i class="fas fa-clock"></i> Time-Sensitive Actions</h4>
+                    {% if results.risk_level == 'VERY HIGH' %}
+                        <div class="timeline-item">
+                            <div class="timeline-time">0-15 min</div>
+                            <div class="timeline-action">Initial assessment, obtain vital signs, notify physician STAT</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">15-30 min</div>
+                            <div class="timeline-action">Draw blood cultures (2 sets), initiate IV access, begin fluid resuscitation</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">30-60 min</div>
+                            <div class="timeline-action">Administer first dose of broad-spectrum antibiotics</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">1-3 hours</div>
+                            <div class="timeline-action">Complete 30 mL/kg crystalloid fluid bolus, reassess hemodynamics</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">2-4 hours</div>
+                            <div class="timeline-action">Recheck lactate, assess response to resuscitation</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">6 hours</div>
+                            <div class="timeline-action">Complete sepsis bundle, document all interventions</div>
+                        </div>
+                    {% else %}
+                        <div class="timeline-item">
+                            <div class="timeline-time">0-30 min</div>
+                            <div class="timeline-action">Complete assessment, notify physician</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">1-2 hours</div>
+                            <div class="timeline-action">Initiate ordered interventions, obtain cultures if indicated</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">4-6 hours</div>
+                            <div class="timeline-action">Reassess clinical status, repeat vital signs and labs</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Education & Support -->
+            <div class="results-card full-width">
+                <h2><i class="fas fa-graduation-cap"></i> Patient & Family Education</h2>
+                <ul class="education-list recommendations-list">
+                    <li><i class="fas fa-info-circle"></i> Explain the current clinical situation in understandable terms</li>
+                    <li><i class="fas fa-clipboard-list"></i> Discuss the treatment plan and expected outcomes</li>
+                    <li><i class="fas fa-bell"></i> Educate on warning signs to report immediately (increased confusion, breathing difficulty, worsening condition)</li>
+                    <li><i class="fas fa-phone"></i> Provide contact information for healthcare team</li>
+                    <li><i class="fas fa-hand-holding-heart"></i> Offer emotional support and address concerns</li>
+                    <li><i class="fas fa-users"></i> Involve family in care planning as appropriate</li>
+                    <li><i class="fas fa-book-medical"></i> Provide written information about sepsis and its management</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button onclick="window.print()" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Print Report
+            </button>
+            <a href="/predict" class="btn btn-primary">
+                <i class="fas fa-redo"></i> New Assessment
+            </a>
+            <a href="/about" class="btn btn-secondary">
+                <i class="fas fa-info-circle"></i> Learn More
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
+            <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+</body>
+</html>

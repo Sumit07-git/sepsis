@@ -1,15 +1,17 @@
 """
 Sepsis Early Prediction System - Flask Web Application
-Simplified version with pre-trained model
+Enhanced version with separate results page
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import numpy as np
 import os
 import joblib
 from data_preprocessing import SepsisDataPreprocessor
+from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = 'sepsis_prediction_secret_key_2024'  # Change this in production
 
 # Load pre-trained model
 MODEL_PATH = 'models/sepsis_model.pkl'
@@ -120,16 +122,27 @@ def predict():
             if patient_data['Creatinine'] > 1.2:
                 alerts.append('Elevated creatinine')
             
-            return jsonify({
-                'status': 'success',
+            # Store results in session for results page
+            session['prediction_results'] = {
+                'patient_data': patient_data,
                 'prediction': int(prediction),
                 'probability': float(probability),
                 'risk_level': risk_level,
                 'risk_class': risk_class,
                 'sofa_score': int(sofa),
                 'sirs_count': int(sirs),
-                'alerts': alerts
-            })
+                'alerts': alerts,
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            # Return JSON for AJAX or redirect for form submission
+            if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'status': 'success',
+                    'redirect': url_for('results')
+                })
+            else:
+                return redirect(url_for('results'))
             
         except Exception as e:
             return jsonify({
@@ -138,6 +151,16 @@ def predict():
             }), 500
     
     return render_template('predict.html')
+
+@app.route('/results')
+def results():
+    """Results page with detailed recommendations"""
+    prediction_results = session.get('prediction_results')
+    
+    if not prediction_results:
+        return redirect(url_for('predict'))
+    
+    return render_template('result.html', results=prediction_results)
 
 @app.route('/about')
 def about():
@@ -172,6 +195,7 @@ if __name__ == '__main__':
         print("- Real-time sepsis risk prediction")
         print("- SOFA & SIRS score calculation")
         print("- Clinical alerts and recommendations")
+        print("- Detailed results page with precautions")
         print("- Pre-trained Random Forest model")
         print("="*60 + "\n")
         

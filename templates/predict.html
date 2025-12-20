@@ -37,7 +37,7 @@
             <!-- Input Form -->
             <div class="prediction-form-container">
                 <h2>Patient Data Input</h2>
-                <form id="predictionForm" class="prediction-form">
+                <form id="predictionForm" method="POST" action="/predict" class="prediction-form">
                     <div class="form-section">
                         <h3><i class="fas fa-heartbeat"></i> Vital Signs</h3>
                         
@@ -149,40 +149,41 @@
                 </form>
             </div>
 
-            <!-- Results Display -->
-            <div class="prediction-result" id="predictionResult" style="display: none;">
-                <h2>Risk Assessment Result</h2>
-                
-                <div class="risk-display" id="riskDisplay">
-                    <div class="risk-icon" id="riskIcon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3 id="riskLevel" class="risk-level">-</h3>
-                    <p id="riskProbability" class="risk-probability">-</p>
-                </div>
-                
-                <div class="clinical-scores">
-                    <div class="score-item">
-                        <h4>SOFA Score</h4>
-                        <p id="sofaScore" class="score-value">-</p>
-                    </div>
-                    <div class="score-item">
-                        <h4>SIRS Count</h4>
-                        <p id="sirsCount" class="score-value">-</p>
-                    </div>
-                </div>
-
-                <div class="clinical-alerts" id="clinicalAlerts" style="display: none;">
-                    <h4><i class="fas fa-bell"></i> Clinical Alerts</h4>
-                    <ul id="alertsList"></ul>
-                </div>
+            <!-- Quick Info Panel -->
+            <div class="prediction-result">
+                <h2>Quick Reference</h2>
                 
                 <div class="risk-details">
-                    <h4><i class="fas fa-info-circle"></i> Clinical Interpretation</h4>
-                    <p id="riskInterpretation">-</p>
-                    
-                    <h4><i class="fas fa-clipboard-list"></i> Recommendations</h4>
-                    <ul id="recommendations"></ul>
+                    <h4><i class="fas fa-info-circle"></i> About This Assessment</h4>
+                    <p>This AI-powered system analyzes patient vital signs and laboratory values to predict sepsis risk using:</p>
+                    <ul>
+                        <li>Random Forest machine learning model</li>
+                        <li>SOFA and SIRS clinical scoring</li>
+                        <li>32 engineered clinical features</li>
+                        <li>Evidence-based risk thresholds</li>
+                    </ul>
+
+                    <h4><i class="fas fa-flag"></i> Risk Categories</h4>
+                    <ul>
+                        <li><strong>VERY HIGH (≥70%):</strong> Critical risk, immediate intervention</li>
+                        <li><strong>HIGH (50-69%):</strong> Elevated risk, urgent review needed</li>
+                        <li><strong>MODERATE (30-49%):</strong> Some concerns, enhanced monitoring</li>
+                        <li><strong>LOW (&lt;30%):</strong> Minimal risk, routine care</li>
+                    </ul>
+
+                    <h4><i class="fas fa-heartbeat"></i> Normal Ranges</h4>
+                    <ul>
+                        <li><strong>Heart Rate:</strong> 60-100 bpm</li>
+                        <li><strong>Temp:</strong> 36.5-37.5°C</li>
+                        <li><strong>Resp Rate:</strong> 12-20/min</li>
+                        <li><strong>O2 Sat:</strong> >95%</li>
+                        <li><strong>SBP:</strong> 90-120 mmHg</li>
+                        <li><strong>MAP:</strong> 70-100 mmHg</li>
+                        <li><strong>WBC:</strong> 4-11 ×10³/μL</li>
+                        <li><strong>Platelets:</strong> 150-400 ×10³/μL</li>
+                        <li><strong>Creatinine:</strong> 0.6-1.2 mg/dL</li>
+                        <li><strong>Lactate:</strong> 0.5-2.2 mmol/L</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -238,136 +239,7 @@
             document.getElementById('Creatinine').value = 0.9;
             document.getElementById('Lactate').value = 1.1;
         }
-
-        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const resultDiv = document.getElementById('predictionResult');
-            const riskDisplay = document.getElementById('riskDisplay');
-            
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    resultDiv.style.display = 'block';
-                    
-                    const probability = (data.probability * 100).toFixed(1);
-                    
-                    // Update risk display
-                    riskDisplay.className = 'risk-display risk-' + data.risk_class;
-                    
-                    const icons = {
-                        'very-high': 'fa-skull-crossbones',
-                        'high': 'fa-exclamation-triangle',
-                        'moderate': 'fa-exclamation-circle',
-                        'low': 'fa-check-circle'
-                    };
-                    
-                    document.getElementById('riskIcon').innerHTML = 
-                        `<i class="fas ${icons[data.risk_class]}"></i>`;
-                    document.getElementById('riskLevel').textContent = data.risk_level + ' RISK';
-                    document.getElementById('riskProbability').textContent = 
-                        `Sepsis Probability: ${probability}%`;
-                    
-                    // Update clinical scores
-                    document.getElementById('sofaScore').textContent = data.sofa_score;
-                    document.getElementById('sirsCount').textContent = data.sirs_count;
-                    
-                    // Update alerts
-                    const alertsDiv = document.getElementById('clinicalAlerts');
-                    const alertsList = document.getElementById('alertsList');
-                    
-                    if (data.alerts && data.alerts.length > 0) {
-                        alertsDiv.style.display = 'block';
-                        alertsList.innerHTML = '';
-                        data.alerts.forEach(alert => {
-                            const li = document.createElement('li');
-                            li.className = 'alert-item';
-                            li.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${alert}`;
-                            alertsList.appendChild(li);
-                        });
-                    } else {
-                        alertsDiv.style.display = 'none';
-                    }
-                    
-                    // Interpretation
-                    const interpretations = {
-                        'VERY HIGH': 'Patient shows CRITICAL risk for sepsis. Multiple organ dysfunction indicators present. Immediate intervention required.',
-                        'HIGH': 'Patient shows elevated risk for sepsis development. Multiple clinical indicators suggest early sepsis or SIRS criteria are being met. Prompt clinical review recommended.',
-                        'MODERATE': 'Patient shows moderate risk for sepsis. Some concerning clinical indicators present. Close monitoring and reassessment recommended.',
-                        'LOW': 'Patient shows low risk for sepsis development. Vital signs and laboratory values are within acceptable ranges.'
-                    };
-                    
-                    document.getElementById('riskInterpretation').textContent = 
-                        interpretations[data.risk_level];
-                    
-                    // Recommendations
-                    const recommendations = document.getElementById('recommendations');
-                    recommendations.innerHTML = '';
-                    
-                    let recs = [];
-                    if (data.risk_level === 'VERY HIGH') {
-                        recs = [
-                            'IMMEDIATE physician notification required',
-                            'Initiate sepsis protocol immediately',
-                            'Obtain blood cultures before antibiotics',
-                            'Begin broad-spectrum antibiotics within 1 hour',
-                            'Aggressive fluid resuscitation (30 mL/kg crystalloid)',
-                            'Consider ICU transfer if not already in ICU',
-                            'Monitor vital signs every 15-30 minutes',
-                            'Reassess lactate within 2-4 hours'
-                        ];
-                    } else if (data.risk_level === 'HIGH') {
-                        recs = [
-                            'Urgent clinical review recommended',
-                            'Consider obtaining blood cultures',
-                            'Monitor vital signs every 30-60 minutes',
-                            'Assess for source of infection',
-                            'Consider early antibiotics if infection suspected',
-                            'Optimize fluid resuscitation',
-                            'Consult critical care team',
-                            'Reassess in 1-2 hours or with clinical change'
-                        ];
-                    } else if (data.risk_level === 'MODERATE') {
-                        recs = [
-                            'Clinical review within 2-4 hours',
-                            'Monitor vital signs every 2 hours',
-                            'Trend laboratory values',
-                            'Assess for signs of infection',
-                            'Consider repeat lactate if elevated',
-                            'Document baseline for trending',
-                            'Reassess if clinical status changes'
-                        ];
-                    } else {
-                        recs = [
-                            'Continue routine monitoring',
-                            'Maintain standard vital sign frequency',
-                            'Reassess if clinical status changes',
-                            'Document baseline values for trending'
-                        ];
-                    }
-                    
-                    recs.forEach(rec => {
-                        const li = document.createElement('li');
-                        li.textContent = rec;
-                        recommendations.appendChild(li);
-                    });
-                    
-                    // Scroll to result
-                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    alert('Prediction failed: ' + data.message);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
-        });
     </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
