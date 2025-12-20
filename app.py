@@ -24,25 +24,20 @@ features = None
 preprocessor = SepsisDataPreprocessor()
 
 def load_model():
-    """Load the pre-trained model"""
     global model, scaler, features
     
     if not os.path.exists(MODEL_PATH):
-        print("\n" + "="*60)
-        print("WARNING: Pre-trained model not found!")
-        print("Please run 'python model_trainer.py' first to train the model.")
-        print("="*60 + "\n")
+        print("WARNING: Model files not found")
         return False
+
+    model = joblib.load(MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    features = joblib.load(FEATURES_PATH)
+    print("✓ Model loaded successfully")
+    return True
     
-    try:
-        model = joblib.load(MODEL_PATH)
-        scaler = joblib.load(SCALER_PATH)
-        features = joblib.load(FEATURES_PATH)
-        print("✓ Pre-trained model loaded successfully")
-        return True
-    except Exception as e:
-        print(f"✗ Error loading model: {str(e)}")
-        return False
+load_model()
+
 
 
 
