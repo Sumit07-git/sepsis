@@ -52,7 +52,6 @@ body {
 .app-logo {
     height: 64px;
     width: auto;
-    /* margin-right: 10px; */
     min-height: 64px;
     object-fit: contain;
     flex-shrink: 0;
@@ -93,7 +92,7 @@ body {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0F4C81 0%, #1E88E5 100%);
     color: white;
     padding: 4rem 0;
     text-align: center;
@@ -255,7 +254,7 @@ body {
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0F4C81 0%, #1E88E5 100%);
     color: white;
     padding: 4rem 0;
     text-align: center;
@@ -274,7 +273,7 @@ body {
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0F4C81 0%, #1E88E5 100%);
     color: white;
     padding: 3rem 0;
     text-align: center;
