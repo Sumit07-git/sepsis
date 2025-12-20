@@ -44,6 +44,10 @@ def load_model():
         print(f"✗ Error loading model: {str(e)}")
         return False
 
+@app.route("/")
+def home():
+    return "Flask running on Render"
+
 @app.route('/')
 def index():
     """Home page"""
