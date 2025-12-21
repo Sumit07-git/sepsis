@@ -5,20 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Prediction Results - Sepsis Early Prediction</title>
     
-    <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <!-- Results Page Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+        <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
                 <img src="{{url_for('static', filename='images/image.png') }}"
@@ -34,8 +30,7 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <div class="page-header">
+        <div class="page-header">
         <div class="container">
             <h1><i class="fas fa-file-medical"></i> Assessment Results</h1>
             <p>Comprehensive risk analysis and clinical recommendations</p>
@@ -43,8 +38,7 @@
     </div>
 
     <div class="results-container">
-        <!-- Results Header with Risk Display -->
-        <div class="results-header">
+                <div class="results-header">
             <div class="risk-display risk-{{ results.risk_class }}">
                 <div class="risk-icon">
                     {% if results.risk_level == 'VERY HIGH' %}
@@ -60,8 +54,7 @@
                 <h2 class="risk-level">{{ results.risk_level }} RISK</h2>
                 <p class="risk-probability">Sepsis Probability: {{ "%.1f"|format(results.probability * 100) }}%</p>
                 
-                <!-- Patient Demographics Display -->
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
+                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
                     <p style="font-size: 0.95rem; opacity: 0.95;">
                         <i class="fas fa-user"></i> 
                         {{ results.patient_data.Age }} years old | 
@@ -106,8 +99,7 @@
             </div>
             {% endif %}
 
-            <!-- Clinical Recommendations -->
-            <div class="results-card full-width">
+                        <div class="results-card full-width">
                 <h2><i class="fas fa-clipboard-list"></i> Clinical Recommendations</h2>
                 <ul class="recommendations-list">
                     {% if results.risk_level == 'VERY HIGH' %}
@@ -150,8 +142,7 @@
                 </ul>
             </div>
 
-            <!-- Precautions and Prevention -->
-            <div class="results-card full-width">
+                        <div class="results-card full-width">
                 <h2><i class="fas fa-shield-alt"></i> Precautions & Prevention Measures</h2>
                 <ul class="precautions-list">
                     {% if results.risk_level in ['VERY HIGH', 'HIGH'] %}
@@ -185,8 +176,7 @@
                 </ul>
             </div>
 
-            <!-- Monitoring Schedule -->
-            <div class="results-card">
+                        <div class="results-card">
                 <h2><i class="fas fa-clock"></i> Monitoring Schedule</h2>
                 <div class="monitoring-schedule">
                     <h4><i class="fas fa-heartbeat"></i> Vital Signs Frequency</h4>
@@ -233,8 +223,7 @@
                 </div>
             </div>
 
-            <!-- Intervention Timeline (for high-risk patients) -->
-            {% if results.risk_level in ['VERY HIGH', 'HIGH'] %}
+                        {% if results.risk_level in ['VERY HIGH', 'HIGH'] %}
             <div class="results-card">
                 <h2><i class="fas fa-stopwatch"></i> Critical Intervention Timeline</h2>
                 <div class="intervention-timeline">
@@ -282,8 +271,7 @@
             </div>
             {% endif %}
 
-            <!-- Education & Support -->
-            <div class="results-card full-width">
+                        <div class="results-card full-width">
                 <h2><i class="fas fa-graduation-cap"></i> Patient & Family Education</h2>
                 <ul class="education-list recommendations-list">
                     <li><i class="fas fa-info-circle"></i> Explain the current clinical situation in understandable terms</li>
@@ -297,8 +285,7 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
+                <div class="action-buttons">
             <button onclick="window.print()" class="btn btn-secondary">
                 <i class="fas fa-print"></i> Print Report
             </button>
@@ -310,24 +297,21 @@
             </a>
         </div>
 
-        <!-- Disclaimer -->
-        <div class="disclaimer-box">
+                <div class="disclaimer-box">
             <h2><i class="fas fa-exclamation-triangle"></i> Medical Disclaimer</h2>
             <p><strong>This is an AI-assisted educational tool and should not replace clinical judgment.</strong></p>
             <p>All predictions must be validated by qualified healthcare professionals. Always follow your institution's sepsis protocols and consult with physicians for patient care decisions.</p>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
+        <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
             <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>
         </div>
     </footer>
 
-    <!-- JavaScript Files -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/result.js') }}"></script>
 </body>
 </html>

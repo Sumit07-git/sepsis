@@ -1,9 +1,3 @@
-"""
-Train and save pre-trained sepsis prediction model
-Enhanced with age and gender features
-Run this once to generate the model file
-"""
-
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -22,7 +16,7 @@ def train_pretrained_model():
     print("With Age and Gender Demographics")
     print("="*60)
     
-    # Generate or load training data
+
     if not os.path.exists('sepsis_training_data.csv'):
         print("\n[1/7] Generating training dataset with demographics...")
         df = generate_pretrained_model_data()
@@ -35,11 +29,11 @@ def train_pretrained_model():
     print(f"Age range: {df['Age'].min():.0f}-{df['Age'].max():.0f} years")
     print(f"Gender: {df['Gender'].mean()*100:.1f}% male, {(1-df['Gender'].mean())*100:.1f}% female")
     
-    # Initialize preprocessor
+
     print("\n[2/7] Creating features with age and gender...")
     preprocessor = SepsisDataPreprocessor()
     
-    # Prepare features for all patients
+
     X_list = []
     y_list = []
     
@@ -59,7 +53,7 @@ def train_pretrained_model():
     print(f"  - Demographic features: 5 (age/gender interactions)")
     print(f"  - Clinical scores: 22 (SOFA, SIRS, risk flags)")
     
-    # Split data
+
     print("\n[3/7] Splitting data (80/20)...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
@@ -68,7 +62,7 @@ def train_pretrained_model():
     print(f"Training set: {X_train.shape[0]} samples")
     print(f"Test set: {X_test.shape[0]} samples")
     
-    # Analyze demographics in splits
+
     train_indices = [i for i in range(len(y)) if i < len(y_train)]
     test_indices = [i for i in range(len(y)) if i >= len(y_train)]
     
@@ -77,13 +71,13 @@ def train_pretrained_model():
     print(f"Test set demographics:")
     print(f"  - Sepsis cases: {sum(y_test == 1)} ({sum(y_test == 1)/len(y_test)*100:.1f}%)")
     
-    # Scale features
+
     print("\n[4/7] Scaling features...")
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     
-    # Handle class imbalance with SMOTE
+
     print("\n[5/7] Handling class imbalance with SMOTE...")
     print(f"Before SMOTE - Class 0: {sum(y_train == 0)}, Class 1: {sum(y_train == 1)}")
     
@@ -92,7 +86,7 @@ def train_pretrained_model():
     
     print(f"After SMOTE - Class 0: {sum(y_train_balanced == 0)}, Class 1: {sum(y_train_balanced == 1)}")
     
-    # Train Random Forest model
+
     print("\n[6/7] Training Random Forest model...")
     print("Model configuration:")
     print("  - n_estimators: 200")
@@ -114,7 +108,7 @@ def train_pretrained_model():
     model.fit(X_train_balanced, y_train_balanced)
     print("✓ Model trained successfully!")
     
-    # Evaluate
+
     print("\n[7/7] Evaluating model performance...")
     from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
     
@@ -137,7 +131,7 @@ def train_pretrained_model():
     print(f"  ROC-AUC:   {roc_auc:.4f}")
     print(f"{'='*50}")
     
-    # Confusion Matrix
+
     cm = confusion_matrix(y_test, y_pred)
     print(f"\nConfusion Matrix:")
     print(f"  True Negatives:  {cm[0][0]}")
@@ -145,7 +139,7 @@ def train_pretrained_model():
     print(f"  False Negatives: {cm[1][0]}")
     print(f"  True Positives:  {cm[1][1]}")
     
-    # Feature Importance
+
     print(f"\n{'='*50}")
     print(f"Top 15 Most Important Features:")
     print(f"{'='*50}")
@@ -157,7 +151,7 @@ def train_pretrained_model():
     for idx, row in feature_importance.head(15).iterrows():
         print(f"  {row['feature']:25s} {row['importance']:.4f}")
     
-    # Check if Age and Gender are in top features
+
     age_importance = feature_importance[feature_importance['feature'] == 'Age']['importance'].values
     gender_importance = feature_importance[feature_importance['feature'] == 'Gender']['importance'].values
     
@@ -166,7 +160,7 @@ def train_pretrained_model():
     if len(gender_importance) > 0:
         print(f"  Gender importance: {gender_importance[0]:.4f} (Rank: {list(feature_importance['feature']).index('Gender') + 1})")
     
-    # Save model and scaler
+
     print(f"\n{'='*50}")
     print("[SAVING] Saving model, scaler, and features...")
     print(f"{'='*50}")
@@ -180,7 +174,7 @@ def train_pretrained_model():
     print("✓ Scaler saved to: models/scaler.pkl")
     print("✓ Features saved to: models/features.pkl")
     
-    # Save feature importance
+
     feature_importance.to_csv('models/feature_importance.csv', index=False)
     print("✓ Feature importance saved to: models/feature_importance.csv")
     

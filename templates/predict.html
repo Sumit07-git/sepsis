@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+        <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
                 <img src="{{url_for('static', filename='images/image.png') }}"
@@ -26,8 +25,7 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <div class="page-header">
+        <div class="page-header">
         <div class="container">
             <h1><i class="fas fa-stethoscope"></i> Sepsis Risk Assessment</h1>
             <p>Enter patient demographics, vital signs, and laboratory values</p>
@@ -36,13 +34,11 @@
 
     <div class="container">
         <div class="prediction-layout">
-            <!-- Input Form -->
-            <div class="prediction-form-container">
+                        <div class="prediction-form-container">
                 <h2>Patient Data Input</h2>
                 <form id="predictionForm" method="POST" action="/predict" class="prediction-form">
                     
-                    <!-- Demographics Section -->
-                    <div class="form-section">
+                                        <div class="form-section">
                         <h3><i class="fas fa-user"></i> Patient Demographics</h3>
                         
                         <div class="demographics-row">
@@ -74,8 +70,7 @@
                         </div>
                     </div>
 
-                    <!-- Vital Signs Section -->
-                    <div class="form-section">
+                                        <div class="form-section">
                         <h3><i class="fas fa-heartbeat"></i> Vital Signs</h3>
                         
                         <div class="form-row">
@@ -136,8 +131,7 @@
                         </div>
                     </div>
 
-                    <!-- Laboratory Values Section -->
-                    <div class="form-section">
+                                        <div class="form-section">
                         <h3><i class="fas fa-flask"></i> Laboratory Values</h3>
                         
                         <div class="form-row">
@@ -187,8 +181,7 @@
                 </form>
             </div>
 
-            <!-- Quick Info Panel -->
-            <div class="prediction-result">
+                        <div class="prediction-result">
                 <h2>Quick Reference</h2>
                 
                 <div class="risk-details">
@@ -235,8 +228,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
+        <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Sepsis Early Prediction System | Machine Learning for Healthcare</p>
             <p class="disclaimer">This system is for educational and research purposes only. Not for clinical use.</p>

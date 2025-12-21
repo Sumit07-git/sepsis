@@ -1,8 +1,3 @@
-"""
-Sepsis Early Prediction System - Flask Web Application
-Enhanced version with gender, age, and mobile-responsive design
-"""
-
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import numpy as np
 import os
@@ -11,9 +6,7 @@ from data_preprocessing import SepsisDataPreprocessor
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'sepsis_prediction_secret_key_2024'  # Change this in production
-
-# Load pre-trained model
+app.secret_key = 'sepsis_prediction_secret_key_2' 
 MODEL_PATH = 'models/sepsis_model.pkl'
 SCALER_PATH = 'models/scaler.pkl'
 FEATURES_PATH = 'models/features.pkl'
@@ -56,8 +49,6 @@ def predict():
                     'status': 'error',
                     'message': 'Model not loaded. Please run model_trainer.py first.'
                 }), 500
-            
-            # Get patient data from form including gender and age
             patient_data = {
                 'Age': int(request.form.get('Age', 50)),
                 'Gender': int(request.form.get('Gender', 1)),  # 1=Male, 0=Female
@@ -73,18 +64,10 @@ def predict():
                 'Creatinine': float(request.form.get('Creatinine', 1.0)),
                 'Lactate': float(request.form.get('Lactate', 1.5))
             }
-            
-            # Prepare features
             X, feature_names = preprocessor.prepare_for_prediction(patient_data)
-            
-            # Scale features
             X_scaled = scaler.transform(X)
-            
-            # Make prediction
             prediction = model.predict(X_scaled)[0]
             probability = model.predict_proba(X_scaled)[0, 1]
-            
-            # Determine risk level
             if probability >= 0.7:
                 risk_level = 'VERY HIGH'
                 risk_class = 'very-high'
@@ -97,12 +80,8 @@ def predict():
             else:
                 risk_level = 'LOW'
                 risk_class = 'low'
-            
-            # Calculate clinical scores
             sofa = preprocessor.create_smart_features(patient_data)['SOFA_approx'].values[0]
             sirs = preprocessor.create_smart_features(patient_data)['SIRS_count'].values[0]
-            
-            # Generate clinical alerts
             alerts = []
             if patient_data['HR'] > 100:
                 alerts.append('Tachycardia detected (HR > 100)')
@@ -120,12 +99,8 @@ def predict():
                 alerts.append('Thrombocytopenia detected')
             if patient_data['Creatinine'] > 1.2:
                 alerts.append('Elevated creatinine')
-            
-            # Add age-specific alerts
             if patient_data['Age'] >= 65:
                 alerts.append('Elderly patient - increased sepsis risk')
-            
-            # Store results in session for results page
             session['prediction_results'] = {
                 'patient_data': patient_data,
                 'prediction': int(prediction),
@@ -137,8 +112,6 @@ def predict():
                 'alerts': alerts,
                 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
-            
-            # Return JSON for AJAX or redirect for form submission
             if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return jsonify({
                     'status': 'success',
@@ -182,8 +155,6 @@ if __name__ == '__main__':
     print("\n" + "="*60)
     print("SEPSIS EARLY PREDICTION SYSTEM")
     print("="*60)
-    
-    # Load model
     model_loaded = load_model()
     
     if not model_loaded:

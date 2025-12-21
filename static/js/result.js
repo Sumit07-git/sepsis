@@ -1,61 +1,31 @@
-// Sepsis Prediction System - Results Page JavaScript with Mobile Support
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeResultsPage();
 });
 
-/**
- * Initialize the results page
- */
 function initializeResultsPage() {
-    // Add animation observers
     setupScrollAnimations();
-    
-    // Setup print functionality
     setupPrintHandler();
-    
-    // Setup export functionality
     setupExportHandler();
-    
-    // Highlight abnormal values
     highlightAbnormalValues();
-    
-    // Add tooltips
     addTooltips();
-    
-    // Setup collapsible sections for mobile
     setupCollapsibleSections();
-    
-    // Add mobile-specific features
     initializeMobileResultsFeatures();
-    
-    // Highlight demographic risk factors
     highlightDemographicRisks();
     
     console.log('Results page initialized successfully');
 }
 
-/**
- * Initialize mobile-specific features for results page
- */
 function initializeMobileResultsFeatures() {
     const isMobile = window.innerWidth < 768;
     
     if (isMobile) {
-        // Add swipe gestures for navigation
         setupSwipeNavigation();
-        
-        // Optimize card spacing
         optimizeCardSpacing();
-        
-        // Add quick scroll to top button
         addScrollToTopButton();
     }
 }
 
-/**
- * Setup swipe navigation on mobile
- */
 function setupSwipeNavigation() {
     let touchStartX = 0;
     let touchEndX = 0;
@@ -75,7 +45,6 @@ function setupSwipeNavigation() {
         
         if (Math.abs(diff) > swipeThreshold) {
             if (diff > 0) {
-                // Swipe right - go back to prediction page
                 const predictBtn = document.querySelector('a[href="/predict"]');
                 if (predictBtn && window.scrollY < 100) {
                     window.location.href = '/predict';
@@ -85,9 +54,6 @@ function setupSwipeNavigation() {
     }
 }
 
-/**
- * Add scroll to top button for mobile
- */
 function addScrollToTopButton() {
     const button = document.createElement('button');
     button.innerHTML = '<i class="fas fa-arrow-up"></i>';
@@ -113,8 +79,6 @@ function addScrollToTopButton() {
     `;
     
     document.body.appendChild(button);
-    
-    // Show/hide based on scroll position
     window.addEventListener('scroll', function() {
         if (window.scrollY > 300) {
             button.style.display = 'flex';
@@ -128,17 +92,12 @@ function addScrollToTopButton() {
             top: 0,
             behavior: 'smooth'
         });
-        
-        // Haptic feedback
         if (navigator.vibrate) {
             navigator.vibrate(50);
         }
     });
 }
 
-/**
- * Optimize card spacing for mobile
- */
 function optimizeCardSpacing() {
     const cards = document.querySelectorAll('.results-card');
     cards.forEach(card => {
@@ -146,16 +105,11 @@ function optimizeCardSpacing() {
     });
 }
 
-/**
- * Highlight demographic risk factors
- */
 function highlightDemographicRisks() {
-    // Get patient age and gender from the results
     const ageElement = document.querySelector('.vital-item label:contains("Age")');
     const genderElement = document.querySelector('.vital-item label:contains("Gender")');
     
     if (!ageElement) {
-        // Try alternative method
         const vitalItems = document.querySelectorAll('.vital-item');
         vitalItems.forEach(item => {
             const label = item.querySelector('label');
@@ -183,7 +137,6 @@ function highlightDemographicRisks() {
             if (labelText.includes('gender') && valueElement) {
                 const genderText = valueElement.textContent.toLowerCase();
                 if (genderText.includes('male')) {
-                    // Males have slightly higher risk
                     item.style.borderLeftColor = '#3b82f6';
                 }
             }
@@ -191,9 +144,6 @@ function highlightDemographicRisks() {
     }
 }
 
-/**
- * Add risk badge to element
- */
 function addRiskBadge(element, text, type) {
     const badge = document.createElement('span');
     badge.className = `risk-badge risk-badge-${type}`;
@@ -215,9 +165,6 @@ function addRiskBadge(element, text, type) {
     }
 }
 
-/**
- * Setup scroll animations for cards
- */
 function setupScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
@@ -233,8 +180,6 @@ function setupScrollAnimations() {
             }
         });
     }, observerOptions);
-
-    // Observe all result cards
     document.querySelectorAll('.results-card').forEach(card => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
@@ -243,9 +188,6 @@ function setupScrollAnimations() {
     });
 }
 
-/**
- * Setup print handler with custom styling
- */
 function setupPrintHandler() {
     const printButtons = document.querySelectorAll('[onclick*="print"]');
     
@@ -257,32 +199,18 @@ function setupPrintHandler() {
     });
 }
 
-/**
- * Print results with custom formatting
- */
 function printResults() {
-    // Add print-specific class
     document.body.classList.add('printing');
-    
-    // Haptic feedback on mobile
     if (navigator.vibrate) {
         navigator.vibrate([50, 30, 50]);
     }
-    
-    // Trigger print
     window.print();
-    
-    // Remove print class after printing
     setTimeout(() => {
         document.body.classList.remove('printing');
     }, 1000);
 }
 
-/**
- * Setup export to PDF/Image functionality
- */
 function setupExportHandler() {
-    // Add export button if needed
     const actionButtons = document.querySelector('.action-buttons');
     
     if (actionButtons && !document.querySelector('.export-btn')) {
@@ -290,8 +218,6 @@ function setupExportHandler() {
         exportBtn.className = 'btn btn-secondary export-btn';
         exportBtn.innerHTML = '<i class="fas fa-download"></i> Export PDF';
         exportBtn.onclick = exportToPDF;
-        
-        // Insert after print button
         const printBtn = document.querySelector('[onclick*="print"]');
         if (printBtn) {
             printBtn.parentNode.insertBefore(exportBtn, printBtn.nextSibling);
@@ -299,11 +225,7 @@ function setupExportHandler() {
     }
 }
 
-/**
- * Export results to PDF (requires html2pdf library)
- */
 function exportToPDF() {
-    // Check if html2pdf is available
     if (typeof html2pdf === 'undefined') {
         alert('PDF export feature requires html2pdf library. Using print instead.');
         printResults();
@@ -329,9 +251,6 @@ function exportToPDF() {
     });
 }
 
-/**
- * Highlight abnormal values in vitals
- */
 function highlightAbnormalValues() {
     const vitalItems = document.querySelectorAll('.vital-item');
     
@@ -348,8 +267,6 @@ function highlightAbnormalValues() {
         if (isNaN(value)) return;
         
         let isAbnormal = false;
-        
-        // Define normal ranges (including age considerations)
         const ranges = {
             'heart rate': { min: 60, max: 100 },
             'temperature': { min: 36.5, max: 37.5 },
@@ -364,8 +281,6 @@ function highlightAbnormalValues() {
             'creatinine': { min: 0.6, max: 1.2 },
             'lactate': { min: 0.5, max: 2.2 }
         };
-        
-        // Check if value is outside normal range
         for (const [key, range] of Object.entries(ranges)) {
             if (labelText.includes(key)) {
                 if (value < range.min || value > range.max) {
@@ -374,14 +289,10 @@ function highlightAbnormalValues() {
                 }
             }
         }
-        
-        // Add visual indicator for abnormal values
         if (isAbnormal) {
             item.style.borderLeftColor = '#ef4444';
             item.style.borderLeftWidth = '5px';
             item.classList.add('abnormal-value');
-            
-            // Add warning icon
             const valueDiv = item.querySelector('.value');
             if (valueDiv && !valueDiv.querySelector('.warning-icon')) {
                 const warningIcon = document.createElement('i');
@@ -399,11 +310,7 @@ function highlightAbnormalValues() {
     });
 }
 
-/**
- * Add tooltips to elements
- */
 function addTooltips() {
-    // Add tooltips to clinical scores
     const sofaScore = document.querySelector('.clinical-scores .score-item:first-child');
     if (sofaScore) {
         sofaScore.title = 'Sequential Organ Failure Assessment: Evaluates dysfunction across multiple organ systems';
@@ -413,8 +320,6 @@ function addTooltips() {
     if (sirsCount) {
         sirsCount.title = 'Systemic Inflammatory Response Syndrome: Count of inflammatory criteria met';
     }
-    
-    // Add tooltips to abbreviations
     const abbreviations = {
         'HR': 'Heart Rate',
         'O2Sat': 'Oxygen Saturation',
@@ -442,22 +347,16 @@ function addTooltips() {
     });
 }
 
-/**
- * Setup collapsible sections for better mobile experience
- */
 function setupCollapsibleSections() {
     const isMobile = window.innerWidth < 768;
     
     if (isMobile) {
         document.querySelectorAll('.results-card h2').forEach(header => {
-            // Skip if already has click handler
             if (header.classList.contains('collapsible-header')) return;
             
             header.classList.add('collapsible-header');
             header.style.cursor = 'pointer';
             header.style.userSelect = 'none';
-            
-            // Add chevron icon
             const chevron = document.createElement('i');
             chevron.className = 'fas fa-chevron-down';
             chevron.style.cssText = `
@@ -481,8 +380,6 @@ function setupCollapsibleSections() {
                         chevron.style.transform = 'rotate(0deg)';
                     }
                 }
-                
-                // Haptic feedback
                 if (navigator.vibrate) {
                     navigator.vibrate(10);
                 }
@@ -491,16 +388,11 @@ function setupCollapsibleSections() {
     }
 }
 
-/**
- * Generate summary text for easy sharing
- */
 function generateSummaryText() {
     const ageElement = document.querySelector('.vital-item label:contains("Age")');
     const genderElement = document.querySelector('.vital-item label:contains("Gender")');
     
     let demographics = '';
-    
-    // Try to get age and gender
     const vitalItems = document.querySelectorAll('.vital-item');
     vitalItems.forEach(item => {
         const label = item.querySelector('label');
@@ -541,9 +433,6 @@ This is an automated assessment. Always consult with healthcare professionals.
     `.trim();
 }
 
-/**
- * Copy summary to clipboard
- */
 function copySummaryToClipboard() {
     const summary = generateSummaryText();
     
@@ -558,7 +447,6 @@ function copySummaryToClipboard() {
             showNotification('Failed to copy summary', 'error');
         });
     } else {
-        // Fallback for older browsers
         const textarea = document.createElement('textarea');
         textarea.value = summary;
         textarea.style.position = 'fixed';
@@ -578,16 +466,10 @@ function copySummaryToClipboard() {
     }
 }
 
-/**
- * Show notification message
- */
 function showNotification(message, type = 'info') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
-    
-    // Style the notification
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -600,8 +482,6 @@ function showNotification(message, type = 'info') {
         animation: slideInRight 0.3s ease-out;
         max-width: 90%;
     `;
-    
-    // Set color based on type
     const colors = {
         success: { bg: '#10b981', text: 'white' },
         error: { bg: '#ef4444', text: 'white' },
@@ -611,11 +491,7 @@ function showNotification(message, type = 'info') {
     
     notification.style.backgroundColor = colors[type].bg;
     notification.style.color = colors[type].text;
-    
-    // Add to page
     document.body.appendChild(notification);
-    
-    // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => {
@@ -626,9 +502,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-/**
- * Add copy button to action buttons
- */
 function addCopyButton() {
     const actionButtons = document.querySelector('.action-buttons');
     
@@ -642,9 +515,6 @@ function addCopyButton() {
     }
 }
 
-/**
- * Calculate and display time elapsed
- */
 function updateTimeElapsed() {
     const timestampElement = document.querySelector('.results-timestamp');
     if (!timestampElement) return;
@@ -671,18 +541,12 @@ function updateTimeElapsed() {
     }
 }
 
-/**
- * Add keyboard shortcuts
- */
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + P for print
         if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
             e.preventDefault();
             printResults();
         }
-        
-        // Escape to go back
         if (e.key === 'Escape') {
             const newAssessmentBtn = document.querySelector('a[href="/predict"]');
             if (newAssessmentBtn) {
@@ -692,13 +556,8 @@ function setupKeyboardShortcuts() {
     });
 }
 
-/**
- * Track user interactions (for analytics)
- */
 function trackInteraction(action, label) {
     console.log(`User interaction: ${action} - ${label}`);
-    
-    // If Google Analytics is available
     if (typeof gtag !== 'undefined') {
         gtag('event', action, {
             'event_category': 'Results Page',
@@ -707,9 +566,6 @@ function trackInteraction(action, label) {
     }
 }
 
-/**
- * Add smooth scroll behavior
- */
 function setupSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -726,24 +582,17 @@ function setupSmoothScroll() {
     });
 }
 
-/**
- * Initialize all additional features
- */
 function initializeAdditionalFeatures() {
     addCopyButton();
     updateTimeElapsed();
     setupKeyboardShortcuts();
     setupSmoothScroll();
 }
-
-// Initialize additional features when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeAdditionalFeatures);
 } else {
     initializeAdditionalFeatures();
 }
-
-// Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -809,8 +658,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Export functions for external use
 window.SepsisResults = {
     printResults,
     copySummaryToClipboard,
